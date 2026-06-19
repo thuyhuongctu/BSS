@@ -73,7 +73,9 @@ sequence, aligning the simulation with the cumulative learning trajectory of the
 - **CSV export** — one-click export of the final leaderboard standings (UTF-8 BOM for
   spreadsheet compatibility) for record-keeping.
 - **Instructor keyboard shortcuts** (active on the Play tab): `S` start timer · `P` pause ·
-  `E` random event · `F` finalize round · `N` next round.
+  `E` random event · `F` finalize round · `N` next round. On-screen `kbd` hints aid recall.
+- **Print-friendly** — a dedicated `@media print` stylesheet outputs the leaderboard alone,
+  on white, for clean handouts.
 
 ---
 
