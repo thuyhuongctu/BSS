@@ -1217,6 +1217,49 @@
     max-width: 42ch;
     line-height: 1.6;
   }
+
+  /* Toast notifications — non-blocking feedback (replaces window.alert). */
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: min(360px, calc(100vw - 40px));
+  }
+  .toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 16px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--r-md);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    color: var(--text-1);
+    font-size: 13px;
+    line-height: 1.45;
+    animation: toast-in 0.25s ease;
+  }
+  .toast.leaving { animation: toast-out 0.25s ease forwards; }
+  .toast.success { border-left-color: var(--success-glow, #34d399); }
+  .toast.error   { border-left-color: var(--danger-glow, #f87171); }
+  .toast.warn    { border-left-color: #f59e0b; }
+  @keyframes toast-in  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+  @keyframes toast-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(16px); } }
+
+  /* Horizontally scrollable data tables on small screens. */
+  .table-card { overflow: hidden; }
+  @media (max-width: 700px) {
+    .table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    #scoreboardTable { min-width: 640px; }
+    .toast-container { top: 12px; right: 12px; left: 12px; max-width: none; }
+  }
 </style>
 </head>
 <body data-theme="dark">
@@ -1477,7 +1520,7 @@
 
     <div class="stats-grid" id="quickStatsContainer"></div>
 
-    <div class="card" style="padding: 0; overflow: hidden;">
+    <div class="card table-card" style="padding: 0;">
       <table class="data-table" id="scoreboardTable">
         <thead>
           <tr>
@@ -1929,6 +1972,27 @@ function setLang(lang) {
   renderHistory();
 }
 
+function showToast(message, type = 'info', duration = 3500) {
+  let container = document.getElementById('toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.setAttribute('role', 'status');
+  toast.textContent = message;
+  container.appendChild(toast);
+  const remove = () => {
+    toast.classList.add('leaving');
+    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+  };
+  toast.addEventListener('click', remove);
+  setTimeout(remove, duration);
+}
+
 function t(key, ...args) {
   let str = TRANSLATIONS[currentLang][key] || key;
   args.forEach((a, i) => {
@@ -2164,7 +2228,7 @@ function lockGroup(i) {
   g.currentDecision.marketing = parseFloat(document.getElementById('marketing_' + i).value) || 0;
   
   if (g.currentDecision.price <= 0 || g.currentDecision.plannedQ <= 0) {
-    alert(t('alert_invalid_input', g.name));
+    showToast(t('alert_invalid_input', g.name), 'error');
     return;
   }
   g.locked = true;
@@ -2203,7 +2267,7 @@ function startTimer() {
       updateTimerDisplay();
     } else {
       pauseTimer();
-      alert('⏰ ' + t('alert_time_up'));
+      showToast('⏰ ' + t('alert_time_up'), 'warn');
     }
   }, 1000);
 }
@@ -2344,7 +2408,7 @@ function showRoundSummary() {
 
 function goToNextRound() {
   if (state.currentRound >= state.totalRounds) {
-    alert('🏆 ' + t('alert_done'));
+    showToast('🏆 ' + t('alert_done'), 'success');
     return;
   }
   if (state.groups[0].rounds.length < state.currentRound) {
@@ -2552,9 +2616,9 @@ function importData(event) {
       updateUI();
       renderSetupPanel();
       renderPlayPanel();
-      alert('✓ ' + t('import_success'));
+      showToast('✓ ' + t('import_success'), 'success');
     } catch (err) {
-      alert('❌ ' + t('import_error'));
+      showToast('❌ ' + t('import_error'), 'error');
     }
   };
   reader.readAsText(file);
