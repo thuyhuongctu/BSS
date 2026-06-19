@@ -1,0 +1,446 @@
+# Instincts generated from https://github.com/thuyhuongctu-cell/BSS
+# Generated: 2026-06-19T06:56:23.979Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: BSS-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: feat
+
+## Evidence
+
+- 6 commits analyzed
+- Detected conventional commit pattern
+- Examples: feat: add BizArena business simulation web app (EC1314, FEL VLUTE), feat(ux): accessibility & micro-interaction polish; add design-taste skills
+
+---
+id: BSS-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Commit Length
+
+## Action
+
+Write moderate-length commit messages (~65 characters)
+
+## Evidence
+
+- Average commit message length: 65 chars
+- Based on 6 commits
+
+---
+id: BSS-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Naming Files
+
+## Action
+
+Use PascalCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: PascalCase
+
+---
+id: BSS-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: BSS-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: BSS-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: BSS-workflow-feature-development
+trigger: "when implementing a new feature"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Workflow Feature Development
+
+## Action
+
+Follow the feature-development workflow:
+1. Add feature implementation
+2. Add tests for feature
+3. Update documentation
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~30x per month
+- Files: 
+
+---
+id: BSS-workflow-feature-implementation-and-readme-update
+trigger: "when doing feature implementation and readme update"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Workflow Feature Implementation And Readme Update
+
+## Action
+
+Follow the feature-implementation-and-readme-update workflow:
+1. Implement feature or UX change in index.html
+2. Update README.md to document the new feature or change
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: index.html, README.md
+
+---
+id: BSS-workflow-ux-polish-single-file
+trigger: "when doing ux polish single file"
+confidence: 0.65
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/thuyhuongctu-cell/BSS
+---
+
+# BSS Workflow Ux Polish Single File
+
+## Action
+
+Follow the ux-polish-single-file workflow:
+1. Edit index.html to adjust UI/UX details
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~3x per month
+- Files: index.html
+
+---
+id: bss-instinct-file-naming
+trigger: "When creating a new file in the codebase"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct File Naming
+
+## Action
+
+Name the file using PascalCase (e.g., MyComponent.ts)
+
+## Evidence
+
+- Pattern in namingConventions.files: PascalCase
+
+---
+id: bss-instinct-function-naming
+trigger: "When defining a new function"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Function Naming
+
+## Action
+
+Use camelCase for function names (e.g., fetchData)
+
+## Evidence
+
+- Pattern in namingConventions.functions: camelCase
+
+---
+id: bss-instinct-class-naming
+trigger: "When defining a new class"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Class Naming
+
+## Action
+
+Use PascalCase for class names (e.g., UserService)
+
+## Evidence
+
+- Pattern in namingConventions.classes: PascalCase
+
+---
+id: bss-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Constant Naming
+
+## Action
+
+Use SCREAMING_SNAKE_CASE for constant names (e.g., MAX_USERS)
+
+## Evidence
+
+- Pattern in namingConventions.constants: SCREAMING_SNAKE_CASE
+
+---
+id: bss-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Import Style
+
+## Action
+
+Use relative import paths (e.g., import x from './x')
+
+## Evidence
+
+- Pattern in importStyle: relative
+
+---
+id: bss-instinct-export-style
+trigger: "When exporting modules or functions"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Export Style
+
+## Action
+
+Use named exports (e.g., export function foo() {})
+
+## Evidence
+
+- Pattern in exportStyle: named
+
+---
+id: bss-instinct-test-location
+trigger: "When adding tests for a feature"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Test Location
+
+## Action
+
+Place test files in a separate test location, not within the main src directory
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation: separate
+
+---
+id: bss-instinct-feature-test-pattern
+trigger: "When implementing a new feature"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Feature Test Pattern
+
+## Action
+
+Add corresponding tests for the feature after implementation
+
+## Evidence
+
+- feature-development workflow: Add tests for feature after implementation
+
+---
+id: bss-instinct-git-commit-format
+trigger: "When making a commit"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Git Commit Format
+
+## Action
+
+Use the 'conventional commits' format with a 'feat' prefix for features (e.g., feat: add leaderboard export)
+
+## Evidence
+
+- Pattern in commits.type: conventional
+- Examples: 'feat: add BizArena business simulation web app...'
+
+---
+id: bss-instinct-git-commit-length
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Git Commit Length
+
+## Action
+
+Keep the commit message concise, aiming for around 65 characters
+
+## Evidence
+
+- Pattern in commits.averageLength: 65
+
+---
+id: bss-instinct-feature-readme-workflow
+trigger: "When adding a new feature or UX enhancement that requires documentation updates"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Feature Readme Workflow
+
+## Action
+
+Implement the feature or UX change in index.html, then update README.md to document the change
+
+## Evidence
+
+- feature-implementation-and-readme-update workflow
+- Commits and files: index.html, README.md
+
+---
+id: bss-instinct-ux-polish-workflow
+trigger: "When making small UX improvements or micro-interaction changes"
+confidence: 0.85
+domain: workflow
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Ux Polish Workflow
+
+## Action
+
+Edit index.html to adjust UI/UX details
+
+## Evidence
+
+- ux-polish-single-file workflow
+- Commits and files: index.html
+
+---
+id: bss-instinct-feature-development-sequence
+trigger: "When developing a new feature"
+confidence: 0.8
+domain: workflow
+source: repo-analysis
+source_repo: thuyhuongctu-cell/BSS
+---
+
+# Bss Instinct Feature Development Sequence
+
+## Action
+
+Follow the sequence: implement feature, add tests, update documentation
+
+## Evidence
+
+- feature-development workflow: commitSequence
+
