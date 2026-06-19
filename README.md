@@ -66,6 +66,8 @@ sequence, aligning the simulation with the cumulative learning trajectory of the
   teams (chart-based).
 - **Game Handbook** — in-app guide covering progression, workflow, and formulas.
 - **Bilingual i18n** — switch between Vietnamese (VI) and English (EN) at runtime.
+- **Accessibility & polish** — keyboard `:focus-visible` rings, tactile pressed states,
+  balanced headline wrapping, and `prefers-reduced-motion` support.
 - **Data persistence** — auto-save to `localStorage`, plus **Export / Import JSON** and
   **Reset All** for backup and migration between machines.
 
@@ -206,6 +208,8 @@ Use the in-app controls at the end of every session:
 ├── .github/
 │   └── workflows/
 │       └── pages.yml     # CI/CD — auto-deploy to GitHub Pages on push to main
+├── .claude/
+│   └── skills/           # Design-taste skills (dev-time) for future UI iterations
 ├── .gitignore
 └── README.md
 ```

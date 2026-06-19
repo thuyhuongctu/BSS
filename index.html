@@ -1127,6 +1127,52 @@
     border: 2px solid var(--bg-1);
   }
   ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+  /* ============================================================
+     UX POLISH — accessibility & micro-interactions
+     (added per design-taste / redesign audit; additive only)
+     ============================================================ */
+
+  /* Keyboard focus ring on every interactive element. Mouse users
+     keep clean visuals via :focus-visible (no ring on click). */
+  a:focus-visible,
+  button:focus-visible,
+  .tab:focus-visible,
+  .lang-btn:focus-visible,
+  .icon-btn:focus-visible,
+  [tabindex]:focus-visible,
+  .field-input:focus-visible,
+  .field-select:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+
+  /* Tactile pressed feedback — simulates a physical click. */
+  button:active,
+  .tab:active,
+  .lang-btn:active,
+  .icon-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Balanced headlines (no orphan words) and readable paragraphs. */
+  h1, h2, h3, .hero-title, .panel-title, .section-title {
+    text-wrap: balance;
+  }
+  p, .subtitle, .hero-subtitle, .note-text {
+    text-wrap: pretty;
+  }
+
+  /* Respect users who prefer reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 </style>
 </head>
 <body data-theme="dark">
