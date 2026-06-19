@@ -70,6 +70,10 @@ sequence, aligning the simulation with the cumulative learning trajectory of the
   balanced headline wrapping, and `prefers-reduced-motion` support.
 - **Data persistence** — auto-save to `localStorage`, plus **Export / Import JSON** and
   **Reset All** for backup and migration between machines.
+- **CSV export** — one-click export of the final leaderboard standings (UTF-8 BOM for
+  spreadsheet compatibility) for record-keeping.
+- **Instructor keyboard shortcuts** (active on the Play tab): `S` start timer · `P` pause ·
+  `E` random event · `F` finalize round · `N` next round.
 
 ---
 

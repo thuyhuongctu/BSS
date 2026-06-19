@@ -1624,6 +1624,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span data-i18n="btn_export">Export JSON</span>
       </button>
+      <button class="btn btn-ghost" onclick="exportLeaderboardCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        <span data-i18n="btn_export_csv">Export CSV</span>
+      </button>
       <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span data-i18n="btn_import">Import JSON</span>
@@ -1758,6 +1762,8 @@ const TRANSLATIONS = {
     data_warning_title: "⚠ Important:",
     data_warning: "This app runs LOCALLY in your browser. Data is auto-saved to localStorage. Closing the tab is fine. <strong>However, changing computers means losing data</strong> — use 'Export JSON' at the end of each session for backup.",
     btn_export: "Export JSON",
+    btn_export_csv: "Export CSV",
+    csv_exported: "Leaderboard exported to CSV",
     btn_import: "Import JSON",
     btn_reset_all: "Reset All",
     btn_close: "Close",
@@ -1897,6 +1903,8 @@ const TRANSLATIONS = {
     data_warning_title: "⚠ Quan trọng:",
     data_warning: "App chạy LOCAL trong trình duyệt. Dữ liệu lưu tự động vào localStorage. Đóng tab vẫn còn. <strong>Đổi máy tính = mất dữ liệu</strong> — hãy dùng 'Export JSON' cuối mỗi buổi để backup.",
     btn_export: "Export JSON",
+    btn_export_csv: "Xuất CSV",
+    csv_exported: "Đã xuất bảng xếp hạng ra CSV",
     btn_import: "Import JSON",
     btn_reset_all: "Reset toàn bộ",
     btn_close: "Đóng",
@@ -1992,6 +2000,22 @@ function showToast(message, type = 'info', duration = 3500) {
   toast.addEventListener('click', remove);
   setTimeout(remove, duration);
 }
+
+// Instructor keyboard shortcuts — active only on the Play tab, and never
+// while typing in a field. Keys: S start · P pause · E event · F finalize · N next.
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'select' || tag === 'textarea' || e.target.isContentEditable) return;
+  const playActive = document.getElementById('panel-play')?.classList.contains('active');
+  if (!playActive) return;
+  const actions = {
+    s: startTimer, p: pauseTimer, e: triggerRandomEvent,
+    f: endCurrentRound, n: goToNextRound,
+  };
+  const fn = actions[e.key.toLowerCase()];
+  if (fn) { e.preventDefault(); fn(); }
+});
 
 function t(key, ...args) {
   let str = TRANSLATIONS[currentLang][key] || key;
@@ -2603,6 +2627,36 @@ function exportData() {
   a.download = `bizarena_FEL_VLUTE_${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+function exportLeaderboardCSV() {
+  const playedRounds = state.groups[0].rounds.length;
+  if (playedRounds === 0) { showToast(t('no_data'), 'warn'); return; }
+
+  const sorted = [...state.groups].sort((a, b) => b.totalProfit - a.totalProfit);
+  const esc = (v) => {
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const header = ['Rank', 'Team', 'Company', 'Revenue (M VND)', 'Cost (M VND)',
+    'Profit (M VND)', 'Cash (M VND)', 'MoS Avg (%)'];
+  const rows = sorted.map((g, i) => {
+    const mosAvg = g.mosHistory.length
+      ? g.mosHistory.reduce((s, m) => s + m, 0) / g.mosHistory.length : 0;
+    return [i + 1, g.name, g.company, g.totalRevenue.toFixed(1), g.totalCost.toFixed(1),
+      g.totalProfit.toFixed(1), g.cash.toFixed(1), mosAvg.toFixed(0)].map(esc).join(',');
+  });
+  const csv = [header.map(esc).join(','), ...rows].join('\n');
+
+  // UTF-8 BOM so Excel renders Vietnamese characters correctly.
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bizarena_leaderboard_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(t('csv_exported'), 'success');
 }
 
 function importData(event) {
