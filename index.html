@@ -1,0 +1,2745 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizArena · Mô phỏng tình huống trong kinh doanh · FEL_VLUTE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /* ============ DESIGN TOKENS ============ */
+  :root {
+    --bg-0: #0A0E1A;
+    --bg-1: #0F1420;
+    --bg-2: #151B2C;
+    --bg-3: #1C2438;
+    --bg-elev: #1F2942;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.12);
+    --border-glow: rgba(99, 102, 241, 0.3);
+    
+    --text-0: #FFFFFF;
+    --text-1: #E5E7EB;
+    --text-2: #9CA3AF;
+    --text-3: #6B7280;
+    --text-4: #4B5563;
+    
+    --primary: #6366F1;
+    --primary-glow: #818CF8;
+    --primary-dim: #4F46E5;
+    
+    --success: #10B981;
+    --success-glow: #34D399;
+    --warning: #F59E0B;
+    --warning-glow: #FBBF24;
+    --danger: #EF4444;
+    --danger-glow: #F87171;
+    
+    --g1: #06B6D4;
+    --g2: #10B981;
+    --g3: #F59E0B;
+    --g4: #8B5CF6;
+    --g5: #EC4899;
+    
+    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-serif: 'Instrument Serif', serif;
+    
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 16px;
+    --r-xl: 20px;
+    --r-2xl: 28px;
+    
+    --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+    --shadow-card: 0 1px 0 rgba(255,255,255,0.04) inset, 0 8px 24px rgba(0,0,0,0.4);
+    --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.5);
+  }
+  
+  [data-theme="light"] {
+    --bg-0: #FAFAFA;
+    --bg-1: #FFFFFF;
+    --bg-2: #F4F4F5;
+    --bg-3: #E4E4E7;
+    --bg-elev: #FFFFFF;
+    --border: rgba(0, 0, 0, 0.06);
+    --border-strong: rgba(0, 0, 0, 0.12);
+    --text-0: #09090B;
+    --text-1: #18181B;
+    --text-2: #52525B;
+    --text-3: #71717A;
+    --text-4: #A1A1AA;
+    --shadow-card: 0 1px 0 rgba(0,0,0,0.02) inset, 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html { scroll-behavior: smooth; }
+  
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-0);
+    color: var(--text-1);
+    line-height: 1.5;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+    overflow-x: hidden;
+    transition: background 0.3s ease;
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(99, 102, 241, 0.08), transparent 50%),
+      radial-gradient(ellipse 60% 50% at 80% 100%, rgba(16, 185, 129, 0.06), transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.3s;
+  }
+  [data-theme="light"] body::before { opacity: 0; }
+  
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.015;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+  
+  .app {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  
+  /* ============ INSTITUTION BAR ============ */
+  .inst-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 24px;
+    background: linear-gradient(90deg, rgba(99,102,241,0.08), rgba(236,72,153,0.05));
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    margin-bottom: 14px;
+  }
+  .inst-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .inst-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--primary-glow);
+    letter-spacing: 0.08em;
+  }
+  .inst-badge svg { width: 13px; height: 13px; }
+  .inst-course {
+    font-family: var(--font-display);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: -0.005em;
+  }
+  .inst-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .inst-chip {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-2);
+    padding: 4px 10px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    letter-spacing: 0.06em;
+  }
+  .inst-chip strong { color: var(--text-0); }
+  
+  /* ============ HEADER ============ */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    margin-bottom: 28px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: sticky;
+    top: 16px;
+    z-index: 10;
+  }
+  
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--g5) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .logo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  }
+  .logo svg {
+    width: 24px;
+    height: 24px;
+    color: white;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .brand-text h1 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-0);
+    line-height: 1.1;
+  }
+  .brand-text .tagline {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 2px;
+    letter-spacing: 0.02em;
+  }
+  
+  .topbar-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .round-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: 0.05em;
+  }
+  .round-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .timer-display {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-0);
+    background: var(--bg-2);
+    padding: 10px 18px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--border-strong);
+    min-width: 110px;
+    text-align: center;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    transition: all 0.2s;
+  }
+  .timer-display.danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
+    color: var(--danger-glow);
+    animation: timer-pulse 1s ease-in-out infinite;
+  }
+  @keyframes timer-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); box-shadow: 0 0 24px rgba(239, 68, 68, 0.4); }
+  }
+  
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r-md);
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    color: var(--text-1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover {
+    background: var(--bg-3);
+    border-color: var(--border-glow);
+    color: var(--text-0);
+  }
+  .icon-btn svg { width: 18px; height: 18px; }
+  
+  .lang-toggle {
+    display: flex;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 100px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .lang-btn {
+    padding: 6px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .lang-btn.active {
+    background: var(--primary);
+    color: white;
+  }
+  
+  /* ============ TABS ============ */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    padding: 4px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow-x: auto;
+  }
+  .tab {
+    flex: 1;
+    min-width: 130px;
+    padding: 12px 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-3);
+    cursor: pointer;
+    border-radius: var(--r-md);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .tab:hover {
+    color: var(--text-1);
+    background: var(--bg-2);
+  }
+  .tab.active {
+    background: var(--bg-3);
+    color: var(--text-0);
+    box-shadow: 0 1px 0 var(--border-strong) inset;
+  }
+  .tab svg { width: 16px; height: 16px; }
+  
+  /* ============ PANELS ============ */
+  .panel { display: none; animation: fadeUp 0.4s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* ============ CARDS ============ */
+  .card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.2s;
+  }
+  
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .card-title h2 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-0);
+    letter-spacing: -0.01em;
+  }
+  .card-title-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-sm);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-title-icon svg { width: 16px; height: 16px; }
+  
+  .hero {
+    margin-bottom: 28px;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-0);
+    line-height: 1.05;
+  }
+  .hero-title .accent {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    background: linear-gradient(135deg, var(--primary-glow), var(--g5));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-subtitle {
+    font-size: 15px;
+    color: var(--text-2);
+    margin-top: 10px;
+    max-width: 720px;
+  }
+  
+  /* ============ FORMS ============ */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  
+  .field { margin-bottom: 14px; }
+  .field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .field-input, .field-select {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    color: var(--text-0);
+    font-family: var(--font-body);
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  .field-input:focus, .field-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  }
+  .field-input::placeholder { color: var(--text-4); }
+  
+  .field-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .field-row {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .field-row .group-badge {
+    padding: 8px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 12px;
+    border-radius: var(--r-sm);
+    background: var(--bg-3);
+    color: var(--text-0);
+  }
+  
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border: none;
+    border-radius: var(--r-md);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.005em;
+  }
+  .btn svg { width: 16px; height: 16px; }
+  
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+  .btn-primary:hover { 
+    background: var(--primary-glow); 
+    transform: translateY(-1px); 
+    box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 8px 20px rgba(99, 102, 241, 0.4);
+  }
+  
+  .btn-success {
+    background: var(--success);
+    color: white;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+  .btn-success:hover { background: var(--success-glow); }
+  
+  .btn-danger {
+    background: var(--danger);
+    color: white;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset;
+  }
+  .btn-danger:hover { background: var(--danger-glow); }
+  
+  .btn-warning {
+    background: var(--warning);
+    color: var(--bg-0);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset;
+  }
+  .btn-warning:hover { background: var(--warning-glow); }
+  
+  .btn-ghost {
+    background: var(--bg-2);
+    color: var(--text-1);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-ghost:hover { 
+    background: var(--bg-3); 
+    border-color: var(--primary);
+    color: var(--text-0);
+  }
+  
+  .btn-lg {
+    padding: 14px 28px;
+    font-size: 14px;
+  }
+  
+  .gv-panel {
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gv-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  }
+  
+  .gv-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .gv-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .gv-panel-title::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 12px var(--primary);
+  }
+  
+  .control-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .control-row.major {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* ============ GROUP CARDS ============ */
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .group-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-lg);
+    padding: 18px;
+    position: relative;
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+  .group-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--group-color);
+    opacity: 0.8;
+  }
+  .group-card.locked {
+    background: linear-gradient(135deg, var(--bg-1) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+  .group-card.locked::before { background: var(--success); }
+  
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+  .group-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--group-color);
+    letter-spacing: 0.1em;
+  }
+  .group-status {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    background: var(--bg-3);
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .group-status.done {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success-glow);
+  }
+  
+  .group-company {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-0);
+    line-height: 1.2;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+    min-height: 34px;
+  }
+  
+  .group-stats {
+    background: var(--bg-2);
+    border-radius: var(--r-sm);
+    padding: 10px 12px;
+    margin-bottom: 14px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 4px 0;
+  }
+  .stat-row:not(:last-child) {
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 5px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-3);
+    font-weight: 500;
+  }
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-0);
+    letter-spacing: -0.02em;
+  }
+  .stat-value.negative { color: var(--danger-glow); }
+  .stat-value.positive { color: var(--success-glow); }
+  
+  .decision-section {
+    border-top: 1px dashed var(--border-strong);
+    padding-top: 12px;
+  }
+  .decision-section .field { margin-bottom: 10px; }
+  .decision-section .field-label {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .decision-section .field-input {
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+  .decision-section .field-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* ============ EVENT PANEL ============ */
+  .event-card {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--r-lg);
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .event-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--warning), var(--warning-glow));
+  }
+  .event-card h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--warning-glow);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .event-card p {
+    font-size: 13px;
+    color: var(--text-2);
+    margin: 4px 0;
+  }
+  .event-card .multipliers {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .event-card .multipliers span {
+    color: var(--text-1);
+  }
+  .event-card .multipliers strong { color: var(--warning-glow); }
+  .event-warning {
+    margin-top: 10px !important;
+    padding-top: 10px;
+    border-top: 1px solid rgba(245, 158, 11, 0.2);
+    color: var(--warning) !important;
+    font-weight: 600;
+  }
+  
+  .info-box, .warn-box, .success-box {
+    padding: 14px 18px;
+    border-radius: var(--r-md);
+    margin: 16px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    border-left: 3px solid;
+  }
+  .info-box {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: var(--primary);
+    color: var(--text-1);
+  }
+  .warn-box {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: var(--danger);
+    color: var(--text-1);
+  }
+  .success-box {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: var(--success);
+    color: var(--text-1);
+  }
+  
+  /* ============ SCOREBOARD ============ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  
+  .kpi-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 18px 20px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+  }
+  .kpi-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-sm);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .kpi-icon svg { width: 18px; height: 18px; }
+  .kpi-label {
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .kpi-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-0);
+    margin-top: 4px;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-value.negative { color: var(--danger-glow); }
+  .kpi-value.positive { color: var(--success-glow); }
+  
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-1);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .data-table th {
+    background: var(--bg-2);
+    padding: 12px 16px;
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--bg-2); }
+  .data-table tr.rank-1 td { background: rgba(245, 158, 11, 0.08); }
+  .data-table tr.rank-2 td { background: rgba(156, 163, 175, 0.08); }
+  .data-table tr.rank-3 td { background: rgba(217, 119, 6, 0.05); }
+  
+  .rank-medal {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+  
+  .chart-section {
+    margin-top: 20px;
+  }
+  .chart-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 110px;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .chart-row:last-child { border-bottom: none; }
+  .chart-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--group-color);
+    letter-spacing: 0.05em;
+  }
+  .chart-bar {
+    height: 28px;
+    background: var(--bg-2);
+    border-radius: var(--r-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-fill {
+    height: 100%;
+    border-radius: var(--r-sm);
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+  }
+  .chart-value {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: right;
+    color: var(--text-1);
+  }
+  
+  /* ============ MODAL ============ */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 14, 26, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  
+  .modal {
+    background: var(--bg-1);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-xl);
+    padding: 28px;
+    max-width: 720px;
+    width: 92%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal h2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-0);
+    margin-bottom: 18px;
+    letter-spacing: -0.02em;
+  }
+  
+  .guide-section {
+    margin-bottom: 28px;
+  }
+  .guide-section h3 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-0);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .guide-section ol, .guide-section ul {
+    margin-left: 24px;
+    color: var(--text-1);
+    line-height: 1.7;
+  }
+  .guide-section ol li, .guide-section ul li {
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .guide-section .info-box {
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  
+  .action-footer {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 100px;
+    color: var(--primary-glow);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  
+  @media (max-width: 1100px) {
+    .groups-grid { grid-template-columns: repeat(3, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .control-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .groups-grid { grid-template-columns: 1fr; }
+    .topbar { flex-direction: column; gap: 12px; }
+    .inst-bar { flex-direction: column; align-items: flex-start; }
+  }
+  
+  /* ============ FOOTER ============ */
+  .app-footer {
+    margin-top: 48px;
+    padding: 24px 0 16px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-3);
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .footer-text .divider {
+    color: var(--text-4);
+    opacity: 0.6;
+  }
+  .footer-text .accent-name {
+    background: linear-gradient(135deg, var(--primary-glow), var(--g5));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+  
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-1); }
+  ::-webkit-scrollbar-thumb { 
+    background: var(--bg-3); 
+    border-radius: 100px;
+    border: 2px solid var(--bg-1);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+  /* ============================================================
+     UX POLISH — accessibility & micro-interactions
+     (added per design-taste / redesign audit; additive only)
+     ============================================================ */
+
+  /* Keyboard focus ring on every interactive element. Mouse users
+     keep clean visuals via :focus-visible (no ring on click). */
+  a:focus-visible,
+  button:focus-visible,
+  .tab:focus-visible,
+  .lang-btn:focus-visible,
+  .icon-btn:focus-visible,
+  [tabindex]:focus-visible,
+  .field-input:focus-visible,
+  .field-select:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+
+  /* Tactile pressed feedback — simulates a physical click. */
+  button:active,
+  .tab:active,
+  .lang-btn:active,
+  .icon-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Balanced headlines (no orphan words) and readable paragraphs. */
+  h1, h2, h3, .hero-title, .panel-title, .section-title {
+    text-wrap: balance;
+  }
+  p, .subtitle, .hero-subtitle, .note-text {
+    text-wrap: pretty;
+  }
+
+  /* Respect users who prefer reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Right-align numeric columns of the leaderboard for clean scanning
+     (Revenue, Cost, Profit, Cash, MoS — columns 4–8). Scoped so other
+     tables are unaffected. */
+  #scoreboardTable th:nth-child(n+4),
+  #scoreboardTable td:nth-child(n+4) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Composed empty state — a "getting started" view instead of bare text. */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 56px 24px;
+    text-align: center;
+    background: var(--bg-1);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-lg);
+  }
+  .empty-state-icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--r-md);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+  }
+  .empty-state-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-0);
+  }
+  .empty-state-text {
+    font-size: 13px;
+    color: var(--text-3);
+    max-width: 42ch;
+    line-height: 1.6;
+  }
+
+  /* Toast notifications — non-blocking feedback (replaces window.alert). */
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: min(360px, calc(100vw - 40px));
+  }
+  .toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 16px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--r-md);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    color: var(--text-1);
+    font-size: 13px;
+    line-height: 1.45;
+    animation: toast-in 0.25s ease;
+  }
+  .toast.leaving { animation: toast-out 0.25s ease forwards; }
+  .toast.success { border-left-color: var(--success-glow, #34d399); }
+  .toast.error   { border-left-color: var(--danger-glow, #f87171); }
+  .toast.warn    { border-left-color: #f59e0b; }
+  @keyframes toast-in  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+  @keyframes toast-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(16px); } }
+
+  /* Horizontally scrollable data tables on small screens. */
+  .table-card { overflow: hidden; }
+  @media (max-width: 700px) {
+    .table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    #scoreboardTable { min-width: 640px; }
+    .toast-container { top: 12px; right: 12px; left: 12px; max-width: none; }
+  }
+
+  /* Keyboard-shortcut hint badge on instructor buttons. */
+  .kbd-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    padding: 0 4px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-2);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+  }
+  @media (max-width: 700px) { .kbd-hint { display: none; } }
+
+  /* Print: show only the leaderboard, cleanly, on white. */
+  @media print {
+    body::before, .topbar, .tabs, .app-footer, .action-footer,
+    .info-box, .inst-bar, .lang-toggle, .icon-btn, .kbd-hint { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .panel { display: none !important; }
+    #panel-scoreboard { display: block !important; }
+    .data-table, .data-table th, .data-table td {
+      color: #000 !important;
+      background: #fff !important;
+      border-color: #ccc !important;
+    }
+    .table-card { overflow: visible !important; border: 1px solid #ccc !important; }
+    #scoreboardTable { min-width: 0 !important; }
+    .kpi-card { border: 1px solid #ccc !important; background: #fff !important; }
+    .kpi-value, .kpi-label { color: #000 !important; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="app">
+  <!-- ============ INSTITUTION BAR ============ -->
+  <div class="inst-bar">
+    <div class="inst-left">
+      <div class="inst-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+        FEL · VLUTE
+      </div>
+      <span class="inst-course" data-i18n="course_name">Học phần: Mô phỏng tình huống trong kinh doanh</span>
+    </div>
+    <div class="inst-right">
+      <span class="inst-chip"><strong data-i18n="lbl_instructor">GV</strong>: PhD Candidate Do Thuy Huong</span>
+      <span class="inst-chip"><strong data-i18n="lbl_semester">HK</strong>: 2B · 2025–2026</span>
+      <span class="inst-chip"><strong data-i18n="lbl_unit">Đơn vị</strong>: FEL_VLUTE</span>
+    </div>
+  </div>
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v18h18"/>
+          <path d="M7 16l4-7 4 4 5-9"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>BizArena</h1>
+        <div class="tagline" data-i18n="tagline">Mô phỏng tình huống trong kinh doanh · 6 vòng · EC1314</div>
+      </div>
+    </div>
+    
+    <div class="topbar-controls">
+      <div class="round-pill" id="roundBadge">
+        <span data-i18n="round">VÒNG</span>: 0 / 6
+      </div>
+      <div class="timer-display" id="timer">10:00</div>
+      
+      <div class="lang-toggle">
+        <button class="lang-btn" data-lang="vi">VI</button>
+        <button class="lang-btn active" data-lang="en">EN</button>
+      </div>
+      
+      <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M5 5l1.4 1.4M17.6 17.6L19 19M2 12h2M20 12h2M5 19l1.4-1.4M17.6 6.4L19 5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ TABS ============ -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('setup', event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <span data-i18n="tab_setup">Thiết lập</span>
+    </button>
+    <button class="tab" onclick="switchTab('play', event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+      <span data-i18n="tab_play">Chơi</span>
+    </button>
+    <button class="tab" onclick="switchTab('scoreboard', event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+        <path d="M4 22h16"/>
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+      </svg>
+      <span data-i18n="tab_scoreboard">Bảng điểm</span>
+    </button>
+    <button class="tab" onclick="switchTab('history', event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span data-i18n="tab_history">Lịch sử</span>
+    </button>
+    <button class="tab" onclick="switchTab('guide', event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span data-i18n="tab_guide">Hướng dẫn</span>
+    </button>
+  </div>
+
+  <!-- ============ PANEL: SETUP ============ -->
+  <div class="panel active" id="panel-setup">
+    <div class="hero">
+      <h1 class="hero-title">
+        <span data-i18n="hero_title_1">Configure your</span> <span class="accent" data-i18n="hero_title_2">arena</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">
+        Set up 5 teams and game parameters. Once ready, switch to the Play tab to start Round 1.
+      </p>
+    </div>
+
+    <div class="form-grid">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <h2 data-i18n="class_info">Class Information</h2>
+        </div>
+        
+        <div class="field">
+          <label class="field-label" data-i18n="course_label">Course</label>
+          <input type="text" class="field-input" id="courseName" value="Mô phỏng tình huống trong kinh doanh (EC1314)">
+        </div>
+        <div class="field-2col">
+          <div class="field">
+            <label class="field-label" data-i18n="class_code">Class Code</label>
+            <input type="text" class="field-input" id="classCode" value="252b_EC1314_1_tructiep">
+          </div>
+          <div class="field">
+            <label class="field-label" data-i18n="semester_label">Semester</label>
+            <input type="text" class="field-input" id="semester" value="HK 2B · 2025–2026">
+          </div>
+        </div>
+        <div class="field-2col">
+          <div class="field">
+            <label class="field-label" data-i18n="teacher_name">Instructor</label>
+            <input type="text" class="field-input" id="teacherName" value="PhD Candidate Do Thuy Huong">
+          </div>
+          <div class="field">
+            <label class="field-label" data-i18n="unit_label">Department / Unit</label>
+            <input type="text" class="field-input" id="unitName" value="FEL_VLUTE">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label" data-i18n="initial_cash">Starting Capital (Million VND)</label>
+          <input type="number" class="field-input" id="initialCash" value="100">
+        </div>
+        <div class="field">
+          <label class="field-label" data-i18n="time_unit">Time Unit per Round</label>
+          <select class="field-select" id="timeUnit">
+            <option value="quy" selected data-i18n="opt_quarter">1 round = 1 quarter (4 rounds = 1 year)</option>
+            <option value="thang" data-i18n="opt_month">1 round = 1 month (6 rounds = 6 months)</option>
+            <option value="tuan" data-i18n="opt_week">1 round = 1 week (6 rounds = 1.5 months)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" data-i18n="round_duration">Duration per Round (minutes)</label>
+          <input type="number" class="field-input" id="roundDuration" value="10" min="3" max="20">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h2 data-i18n="teams">Participating Teams</h2>
+        </div>
+        <div id="groupsInputContainer"></div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top: 24px;">
+      <strong data-i18n="note">Note:</strong> <span data-i18n="setup_note">Each round, teams make 3 decisions: (1) Price, (2) Planned Quantity, (3) Marketing Budget. The system auto-calculates revenue, cost, profit. Random events occur in Rounds 3 and 5.</span>
+    </div>
+
+    <div style="text-align: center; margin-top: 28px;">
+      <button class="btn btn-primary btn-lg" onclick="saveSetupAndStart()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span data-i18n="save_start">Save & Start Round 1</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: PLAY ============ -->
+  <div class="panel" id="panel-play">
+    <div class="gv-panel">
+      <div class="gv-panel-header">
+        <div class="gv-panel-title">
+          <span data-i18n="instructor_console">Instructor Console</span> · <span data-i18n="round">Round</span> <span id="currentRoundNum">1</span>
+        </div>
+        <div class="tag" data-i18n="live">Live</div>
+      </div>
+      
+      <div class="control-row">
+        <button class="btn btn-ghost" onclick="startTimer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span data-i18n="btn_start">Start Timer</span><kbd class="kbd-hint">S</kbd>
+        </button>
+        <button class="btn btn-ghost" onclick="pauseTimer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          <span data-i18n="btn_pause">Pause</span><kbd class="kbd-hint">P</kbd>
+        </button>
+        <button class="btn btn-ghost" onclick="resetTimer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          <span data-i18n="btn_reset">Reset</span>
+        </button>
+        <button class="btn btn-warning" onclick="triggerRandomEvent()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span data-i18n="btn_event">Random Event</span><kbd class="kbd-hint">E</kbd>
+        </button>
+      </div>
+      <div class="control-row major">
+        <button class="btn btn-success" onclick="endCurrentRound()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span data-i18n="btn_finalize">Finalize Round & Compute</span><kbd class="kbd-hint">F</kbd>
+        </button>
+        <button class="btn btn-primary" onclick="goToNextRound()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <span data-i18n="btn_next">Next Round</span><kbd class="kbd-hint">N</kbd>
+        </button>
+      </div>
+    </div>
+
+    <div id="eventDisplay"></div>
+
+    <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text-0); margin-bottom: 14px; letter-spacing: -0.01em;">
+      <span data-i18n="team_dashboard">Team Dashboard</span>
+    </h3>
+    
+    <div class="groups-grid" id="groupsContainer"></div>
+
+    <div class="info-box">
+      <strong data-i18n="instruction">Instruction:</strong> <span data-i18n="play_instruction">Each team's CFO comes to the instructor desk to record decisions. Once all 5 teams have locked, the instructor clicks "Finalize Round".</span>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: SCOREBOARD ============ -->
+  <div class="panel" id="panel-scoreboard">
+    <div class="hero">
+      <h1 class="hero-title">
+        <span class="accent" data-i18n="leaderboard">Leaderboard</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="leaderboard_subtitle">
+        Cumulative ranking after each completed round. The team with the highest total profit wins.
+      </p>
+    </div>
+
+    <div class="stats-grid" id="quickStatsContainer"></div>
+
+    <div class="card table-card" style="padding: 0;">
+      <table class="data-table" id="scoreboardTable">
+        <thead>
+          <tr>
+            <th data-i18n="th_rank">Rank</th>
+            <th data-i18n="th_team">Team</th>
+            <th data-i18n="th_company">Company</th>
+            <th data-i18n="th_revenue">Revenue</th>
+            <th data-i18n="th_cost">Cost</th>
+            <th data-i18n="th_profit">Profit</th>
+            <th data-i18n="th_cash">Cash</th>
+            <th data-i18n="th_mos">MoS Avg</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: HISTORY ============ -->
+  <div class="panel" id="panel-history">
+    <div class="hero">
+      <h1 class="hero-title">
+        <span data-i18n="history_title">Round-by-round</span> <span class="accent" data-i18n="history_accent">timeline</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="history_subtitle">
+        Cumulative profit progression and per-round breakdown for all 5 teams.
+      </p>
+    </div>
+    <div id="historyContainer"></div>
+  </div>
+
+  <!-- ============ PANEL: GUIDE ============ -->
+  <div class="panel" id="panel-guide">
+    <div class="hero">
+      <h1 class="hero-title">
+        <span data-i18n="guide_title">Game</span> <span class="accent" data-i18n="guide_accent">handbook</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="guide_subtitle">
+        Everything you need to run the 6-round business simulation across the next 6 sessions.
+      </p>
+    </div>
+
+    <div class="info-box">
+      <strong data-i18n="philosophy">Philosophy:</strong> <span data-i18n="guide_philosophy">Each round represents one quarter of business operation. Teams set Price, Quantity, and Marketing; the engine computes realized revenue from the demand function Q = a − bP × (1 + marketing factor).</span>
+    </div>
+
+    <div class="guide-section">
+      <h3 data-i18n="guide_h_progression">6-Round Progression (across 6 sessions)</h3>
+      <table class="data-table" style="margin-top: 12px;">
+        <thead>
+          <tr>
+            <th data-i18n="th_round">Round</th>
+            <th data-i18n="th_session">Session</th>
+            <th data-i18n="th_topic">Topic</th>
+            <th data-i18n="th_event">Random Event</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>1</strong></td><td>Session 5</td><td data-i18n="guide_r1">Startup launch — initial pricing</td><td><span style="color: var(--text-3);">—</span></td></tr>
+          <tr><td><strong>2</strong></td><td>Session 6</td><td data-i18n="guide_r2">Cost structure refinement</td><td><span style="color: var(--text-3);">—</span></td></tr>
+          <tr><td><strong>3</strong></td><td>Session 7</td><td data-i18n="guide_r3">Market volatility</td><td><strong style="color: var(--warning-glow);" data-i18n="guide_r3_event">YES (Tet / Pandemic / Competition)</strong></td></tr>
+          <tr><td><strong>4</strong></td><td>Session 8</td><td data-i18n="guide_r4">Fixed cost expansion — investment</td><td><span style="color: var(--text-3);">—</span></td></tr>
+          <tr><td><strong>5</strong></td><td>Session 9</td><td data-i18n="guide_r5">Aggressive marketing campaign</td><td><strong style="color: var(--warning-glow);" data-i18n="guide_r5_event">YES (Opportunity / Risk)</strong></td></tr>
+          <tr><td><strong>6</strong></td><td>Session 10</td><td data-i18n="guide_r6">Final showdown — championship</td><td><span style="color: var(--text-3);">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="guide-section">
+      <h3 data-i18n="guide_h_workflow">Round Workflow (~15 minutes)</h3>
+      <ol>
+        <li data-i18n="guide_step1"><strong>0-2 min:</strong> Instructor opens app, starts the round, projects onto screen</li>
+        <li data-i18n="guide_step2"><strong>2-7 min:</strong> Teams discuss — CFO + CEO + CMO decide Price, Q, Marketing</li>
+        <li data-i18n="guide_step3"><strong>7-9 min:</strong> Each team's CFO walks to instructor desk; instructor enters numbers</li>
+        <li data-i18n="guide_step4"><strong>9-10 min:</strong> Instructor clicks "Random Event" if round 3 or 5</li>
+        <li data-i18n="guide_step5"><strong>10-12 min:</strong> Instructor clicks "Finalize Round" — system computes results</li>
+        <li data-i18n="guide_step6"><strong>12-15 min:</strong> Display scoreboard + history — teams see their position</li>
+      </ol>
+    </div>
+
+    <div class="guide-section">
+      <h3 data-i18n="guide_h_formulas">Computation Formulas</h3>
+      <div class="info-box">
+        <strong data-i18n="formula_demand">Demand:</strong> Q_actual = (3000 − 50 × P) × (1 + marketing × 0.05) × event_multiplier<br>
+        <strong data-i18n="formula_revenue">Revenue:</strong> DT = P × min(Q_planned, Q_actual)<br>
+        <strong data-i18n="formula_cost">Cost:</strong> TC = FC(30M) + 12k × Q_sold + Marketing<br>
+        <strong data-i18n="formula_profit">Profit:</strong> LN = DT − TC<br>
+        <strong>MoS:</strong> (Q_sold − Q*) / Q_sold × 100%
+      </div>
+    </div>
+
+    <div class="guide-section">
+      <h3 data-i18n="guide_h_data">Data Persistence</h3>
+      <div class="warn-box">
+        <strong data-i18n="data_warning_title">⚠ Important:</strong> <span data-i18n="data_warning">This app runs LOCALLY in your browser. Data is auto-saved to localStorage. Closing the tab is fine. <strong>However, changing computers means losing data</strong> — use "Export JSON" at the end of each session for backup.</span>
+      </div>
+    </div>
+
+    <div class="action-footer">
+      <button class="btn btn-primary" onclick="exportData()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span data-i18n="btn_export">Export JSON</span>
+      </button>
+      <button class="btn btn-ghost" onclick="exportLeaderboardCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+        <span data-i18n="btn_export_csv">Export CSV</span>
+      </button>
+      <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span data-i18n="btn_import">Import JSON</span>
+      </button>
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+      <button class="btn btn-danger" onclick="resetAll()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span data-i18n="btn_reset_all">Reset All</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="app-footer">
+    <div class="footer-text">
+      <span>©2026</span>
+      <span class="divider">|</span>
+      <span class="accent-name">PhD Candidate Do Thuy Huong</span>
+      <span class="divider">|</span>
+      <span>FEL_VLUTE</span>
+      <span class="divider">|</span>
+      <span>HK 2B · 2025–2026</span>
+    </div>
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2 id="modalTitle">Title</h2>
+    <div id="modalBody"></div>
+    <div style="text-align: center; margin-top: 24px;">
+      <button class="btn btn-primary" onclick="closeModal()">
+        <span data-i18n="btn_close">Close</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// I18N — TRANSLATIONS
+// ============================================================
+const TRANSLATIONS = {
+  en: {
+    tagline: "Business Situation Simulation · 6 rounds · EC1314",
+    course_name: "Course: Business Situation Simulation",
+    lbl_instructor: "Instructor",
+    lbl_semester: "Semester",
+    lbl_unit: "Unit",
+    round: "Round",
+    tab_setup: "Setup",
+    tab_play: "Play",
+    tab_scoreboard: "Leaderboard",
+    tab_history: "Timeline",
+    tab_guide: "Handbook",
+    hero_title_1: "Configure your",
+    hero_title_2: "arena",
+    hero_subtitle: "Set up 5 teams and game parameters. Once ready, switch to the Play tab to start Round 1.",
+    class_info: "Class Information",
+    course_label: "Course",
+    class_code: "Class Code",
+    semester_label: "Semester",
+    teacher_name: "Instructor",
+    unit_label: "Department / Unit",
+    initial_cash: "Initial Capital (Million VND)",
+    time_unit: "Time Unit per Round",
+    opt_quarter: "1 round = 1 quarter (4 rounds = 1 year)",
+    opt_month: "1 round = 1 month (6 rounds = 6 months)",
+    opt_week: "1 round = 1 week (6 rounds = 1.5 months)",
+    round_duration: "Duration per Round (minutes)",
+    teams: "Participating Teams",
+    company_placeholder: "e.g., MocCafe, Springbean Bakery...",
+    note: "Note:",
+    setup_note: "Each round, teams make three decisions: (1) unit Price, (2) Planned Quantity, and (3) Marketing Budget. The engine then computes Revenue, Total Cost, and Profit automatically. Exogenous market shocks (random events) occur in Rounds 3 and 5.",
+    save_start: "Save & Start Round 1",
+    instructor_console: "Instructor Console",
+    live: "Live",
+    btn_start: "Start Timer",
+    btn_pause: "Pause",
+    btn_reset: "Reset",
+    btn_event: "Random Event",
+    btn_finalize: "Finalize Round & Compute",
+    btn_next: "Next Round",
+    team_dashboard: "Team Dashboard",
+    instruction: "Instruction:",
+    play_instruction: "Each team's CFO comes to the instructor desk to record decisions. Once all 5 teams have locked, the instructor clicks 'Finalize Round'.",
+    leaderboard: "Leaderboard",
+    leaderboard_subtitle: "Cumulative ranking after each completed round. The team with the highest total profit wins.",
+    th_rank: "Rank",
+    th_team: "Team",
+    th_company: "Company",
+    th_revenue: "Revenue",
+    th_cost: "Cost",
+    th_profit: "Profit",
+    th_cash: "Cash",
+    th_mos: "MoS Avg",
+    history_title: "Round-by-round",
+    history_accent: "timeline",
+    history_subtitle: "Cumulative profit progression and per-round breakdown for all 5 teams.",
+    guide_title: "Game",
+    guide_accent: "handbook",
+    guide_subtitle: "Everything you need to run the 6-round business simulation across the next 6 sessions.",
+    philosophy: "Philosophy:",
+    guide_philosophy: "Each round represents one quarter of business operation. Teams set Price, Quantity, and Marketing; the engine computes realized revenue from the demand function Q = a − bP × (1 + marketing factor).",
+    guide_h_progression: "6-Round Progression (across 6 sessions)",
+    th_round: "Round",
+    th_session: "Session",
+    th_topic: "Topic",
+    th_event: "Random Event",
+    guide_r1: "Startup launch — initial pricing",
+    guide_r2: "Cost structure refinement",
+    guide_r3: "Market volatility",
+    guide_r3_event: "YES (Tet / Pandemic / Competition)",
+    guide_r4: "Fixed cost expansion — investment",
+    guide_r5: "Aggressive marketing campaign",
+    guide_r5_event: "YES (Opportunity / Risk)",
+    guide_r6: "Final showdown — championship",
+    guide_h_workflow: "Round Workflow (~15 minutes)",
+    guide_step1: "<strong>0-2 min:</strong> Instructor opens app, starts the round, projects onto screen",
+    guide_step2: "<strong>2-7 min:</strong> Teams discuss — CFO + CEO + CMO decide Price, Q, Marketing",
+    guide_step3: "<strong>7-9 min:</strong> Each team's CFO walks to instructor desk; instructor enters numbers",
+    guide_step4: "<strong>9-10 min:</strong> Instructor clicks 'Random Event' if round 3 or 5",
+    guide_step5: "<strong>10-12 min:</strong> Instructor clicks 'Finalize Round' — system computes results",
+    guide_step6: "<strong>12-15 min:</strong> Display scoreboard + history — teams see their position",
+    guide_h_formulas: "Computation Formulas",
+    formula_demand: "Demand:",
+    formula_revenue: "Revenue:",
+    formula_cost: "Cost:",
+    formula_profit: "Profit:",
+    guide_h_data: "Data Persistence",
+    data_warning_title: "⚠ Important:",
+    data_warning: "This app runs LOCALLY in your browser. Data is auto-saved to localStorage. Closing the tab is fine. <strong>However, changing computers means losing data</strong> — use 'Export JSON' at the end of each session for backup.",
+    btn_export: "Export JSON",
+    btn_export_csv: "Export CSV",
+    csv_exported: "Leaderboard exported to CSV",
+    btn_import: "Import JSON",
+    btn_reset_all: "Reset All",
+    btn_close: "Close",
+    label_team_name: "Team Name",
+    label_price: "Price (k VND / unit)",
+    label_planned_q: "Planned Quantity",
+    label_marketing: "Marketing (Million VND)",
+    status_deciding: "Deciding",
+    status_locked: "Locked",
+    btn_lock: "Lock Decision",
+    btn_unlock: "Unlock",
+    placeholder_company_short: "Company name",
+    kpi_teams: "Teams",
+    kpi_rounds_played: "Rounds Played",
+    kpi_total_profit: "Total Profit",
+    kpi_leader: "Current Leader",
+    no_data_title: "No results yet",
+    no_data: "No rounds completed yet. Switch to Play tab to start Round 1.",
+    chart_title: "Cumulative Profit by Team",
+    chart_per_round: "Per-Round Profit Breakdown",
+    modal_round_finalized: "Round %d Finalized",
+    event_applied: "Event Applied:",
+    event_warning: "This event will apply when the instructor clicks 'Finalize Round'.",
+    event_round: "EVENT · ROUND %d:",
+    impact: "Impact:",
+    demand_mul: "Demand multiplier:",
+    cost_mul: "Cost multiplier:",
+    alert_unlocked: "%d teams haven't locked their decisions: %s.\n\nFinalize anyway?",
+    alert_time_up: "Time's up!",
+    alert_done: "All 6 rounds completed! View the Leaderboard to announce the champion.",
+    alert_invalid_input: "Team %s: Price and Quantity must be > 0!",
+    confirm_skip: "Current round isn't finalized. Skip to next round?",
+    confirm_reset_1: "CONFIRM: Delete all game data and start over?",
+    confirm_reset_2: "FINAL: All scores and history will be PERMANENTLY lost. Continue?",
+    import_success: "Import successful!",
+    import_error: "Error: Invalid file",
+    event_tet: "🌸 Tet Season — Demand UP 30%",
+    event_tet_desc: "Sudden demand spike, but ingredient prices rise too.",
+    event_pandemic: "🦠 Pandemic — Demand DOWN 40%",
+    event_pandemic_desc: "Customers avoid gatherings, demand drops sharply.",
+    event_competition: "⚡ New Competition — Demand DOWN 20%",
+    event_competition_desc: "A rival opens nearby — sharing customers.",
+    event_inflation: "📈 Inflation — Cost UP 15%",
+    event_inflation_desc: "Materials and wages increase with inflation.",
+    event_festival: "🎉 Local Event — Demand UP 50%",
+    event_festival_desc: "Major festival drives unexpected traffic.",
+    event_subsidy: "💼 Government Support — FC DOWN 20%",
+    event_subsidy_desc: "Tax cuts and rent subsidies from the government.",
+  },
+  vi: {
+    tagline: "Mô phỏng tình huống trong kinh doanh · 6 vòng · EC1314",
+    course_name: "Học phần: Mô phỏng tình huống trong kinh doanh",
+    lbl_instructor: "GV",
+    lbl_semester: "HK",
+    lbl_unit: "Đơn vị",
+    round: "VÒNG",
+    tab_setup: "Thiết lập",
+    tab_play: "Chơi",
+    tab_scoreboard: "Bảng điểm",
+    tab_history: "Lịch sử",
+    tab_guide: "Hướng dẫn",
+    hero_title_1: "Thiết lập",
+    hero_title_2: "đấu trường",
+    hero_subtitle: "Cấu hình 5 nhóm và các tham số trò chơi. Sau khi xong, chuyển sang tab Chơi để bắt đầu Vòng 1.",
+    class_info: "Thông tin lớp",
+    course_label: "Học phần",
+    class_code: "Mã lớp",
+    semester_label: "Học kỳ",
+    teacher_name: "Giảng viên",
+    unit_label: "Đơn vị",
+    initial_cash: "Vốn ban đầu (triệu đồng)",
+    time_unit: "Đơn vị thời gian / vòng",
+    opt_quarter: "1 vòng = 1 quý (4 vòng = 1 năm)",
+    opt_month: "1 vòng = 1 tháng (6 vòng = 6 tháng)",
+    opt_week: "1 vòng = 1 tuần (6 vòng = 1.5 tháng)",
+    round_duration: "Thời gian mỗi vòng (phút)",
+    teams: "5 nhóm tham gia",
+    company_placeholder: "VD: Quán Café Mộc, Tiệm bánh Xuân...",
+    note: "Lưu ý:",
+    setup_note: "Mỗi vòng, các nhóm ra 3 quyết định: (1) Giá bán, (2) Sản lượng dự kiến, (3) Ngân sách marketing. Hệ thống tự tính doanh thu, chi phí, lợi nhuận. Có biến cố ngẫu nhiên ở vòng 3 và 5.",
+    save_start: "Lưu & Bắt đầu Vòng 1",
+    instructor_console: "Điều khiển GV",
+    live: "Live",
+    btn_start: "Bắt đầu",
+    btn_pause: "Tạm dừng",
+    btn_reset: "Reset",
+    btn_event: "Biến cố",
+    btn_finalize: "Chốt vòng & Tính kết quả",
+    btn_next: "Vòng tiếp theo",
+    team_dashboard: "Dashboard 5 nhóm",
+    instruction: "Hướng dẫn:",
+    play_instruction: "CFO mỗi nhóm lên bàn GV ghi quyết định. Khi tất cả 5 nhóm đã khóa, GV bấm 'Chốt vòng'.",
+    leaderboard: "Bảng xếp hạng",
+    leaderboard_subtitle: "Xếp hạng tích lũy sau mỗi vòng. Nhóm có tổng lợi nhuận cao nhất thắng.",
+    th_rank: "Hạng",
+    th_team: "Nhóm",
+    th_company: "Doanh nghiệp",
+    th_revenue: "Doanh thu",
+    th_cost: "Chi phí",
+    th_profit: "Lợi nhuận",
+    th_cash: "Tiền mặt",
+    th_mos: "MoS TB",
+    history_title: "Diễn biến",
+    history_accent: "qua các vòng",
+    history_subtitle: "Lợi nhuận lũy kế và chi tiết mỗi vòng cho 5 nhóm.",
+    guide_title: "Sổ tay",
+    guide_accent: "hướng dẫn",
+    guide_subtitle: "Mọi thứ cần biết để vận hành 6 vòng chơi qua 6 buổi học tiếp theo.",
+    philosophy: "Triết lý:",
+    guide_philosophy: "Mỗi vòng = 1 quý kinh doanh. Nhóm quyết định Giá, Sản lượng, Marketing. Hệ thống tính doanh thu thực tế qua hàm cầu Q = a - bP × (1 + marketing_factor).",
+    guide_h_progression: "Tiến trình 6 vòng (qua 6 buổi)",
+    th_round: "Vòng",
+    th_session: "Buổi",
+    th_topic: "Chủ đề",
+    th_event: "Biến cố",
+    guide_r1: "Khởi nghiệp — định giá ban đầu",
+    guide_r2: "Hoàn thiện cấu trúc chi phí",
+    guide_r3: "Biến động thị trường",
+    guide_r3_event: "CÓ (Tết / Dịch / Cạnh tranh)",
+    guide_r4: "Mở rộng FC — đầu tư",
+    guide_r5: "Chiến dịch marketing đột phá",
+    guide_r5_event: "CÓ (Cơ hội / Rủi ro)",
+    guide_r6: "Tổng kết — công bố vô địch",
+    guide_h_workflow: "Quy trình mỗi vòng (~15 phút)",
+    guide_step1: "<strong>Phút 0-2:</strong> GV mở app, bắt đầu vòng, chiếu lên màn hình",
+    guide_step2: "<strong>Phút 2-7:</strong> Nhóm thảo luận — CFO + CEO + CMO quyết định Giá, Q, Marketing",
+    guide_step3: "<strong>Phút 7-9:</strong> CFO mỗi nhóm lên bàn GV, GV nhập 3 con số",
+    guide_step4: "<strong>Phút 9-10:</strong> GV bấm 'Biến cố' nếu vòng 3 hoặc 5",
+    guide_step5: "<strong>Phút 10-12:</strong> GV bấm 'Chốt vòng' — hệ thống tự tính",
+    guide_step6: "<strong>Phút 12-15:</strong> Chiếu bảng điểm + lịch sử",
+    guide_h_formulas: "Công thức tính",
+    formula_demand: "Hàm cầu:",
+    formula_revenue: "Doanh thu:",
+    formula_cost: "Chi phí:",
+    formula_profit: "Lợi nhuận:",
+    guide_h_data: "Lưu trữ dữ liệu",
+    data_warning_title: "⚠ Quan trọng:",
+    data_warning: "App chạy LOCAL trong trình duyệt. Dữ liệu lưu tự động vào localStorage. Đóng tab vẫn còn. <strong>Đổi máy tính = mất dữ liệu</strong> — hãy dùng 'Export JSON' cuối mỗi buổi để backup.",
+    btn_export: "Export JSON",
+    btn_export_csv: "Xuất CSV",
+    csv_exported: "Đã xuất bảng xếp hạng ra CSV",
+    btn_import: "Import JSON",
+    btn_reset_all: "Reset toàn bộ",
+    btn_close: "Đóng",
+    label_team_name: "Tên DN",
+    label_price: "Giá (nghìn đ/SP)",
+    label_planned_q: "Sản lượng dự kiến",
+    label_marketing: "Marketing (triệu đ)",
+    status_deciding: "Đang QĐ",
+    status_locked: "Đã chốt",
+    btn_lock: "Khóa QĐ",
+    btn_unlock: "Mở khóa",
+    placeholder_company_short: "Tên doanh nghiệp",
+    kpi_teams: "Số nhóm",
+    kpi_rounds_played: "Vòng đã chơi",
+    kpi_total_profit: "Tổng LN cả lớp",
+    kpi_leader: "Đang dẫn đầu",
+    no_data_title: "Chưa có kết quả",
+    no_data: "Chưa có vòng nào hoàn thành. Quay lại tab Chơi để bắt đầu vòng 1.",
+    chart_title: "Lợi nhuận lũy kế các nhóm",
+    chart_per_round: "Chi tiết lợi nhuận từng vòng",
+    modal_round_finalized: "Vòng %d đã chốt",
+    event_applied: "Biến cố áp dụng:",
+    event_warning: "Biến cố này sẽ áp dụng khi GV bấm 'Chốt vòng'.",
+    event_round: "BIẾN CỐ · VÒNG %d:",
+    impact: "Tác động:",
+    demand_mul: "Hệ số nhu cầu:",
+    cost_mul: "Hệ số chi phí:",
+    alert_unlocked: "Còn %d nhóm chưa khóa: %s.\n\nVẫn chốt vòng?",
+    alert_time_up: "Hết giờ!",
+    alert_done: "Đã chơi đủ 6 vòng! Xem Bảng điểm để công bố nhà vô địch.",
+    alert_invalid_input: "Nhóm %s: Giá và Sản lượng phải > 0!",
+    confirm_skip: "Vòng hiện tại chưa chốt. Bỏ qua sang vòng tiếp?",
+    confirm_reset_1: "XÁC NHẬN: Xóa toàn bộ dữ liệu game và làm lại từ đầu?",
+    confirm_reset_2: "LẦN CUỐI: Mọi điểm số và lịch sử sẽ MẤT VĨNH VIỄN. Tiếp tục?",
+    import_success: "Import thành công!",
+    import_error: "Lỗi: File không hợp lệ",
+    event_tet: "🌸 Mùa Tết — Cầu TĂNG 30%",
+    event_tet_desc: "Cầu tăng đột biến, giá nguyên liệu cũng tăng.",
+    event_pandemic: "🦠 Dịch bệnh — Cầu GIẢM 40%",
+    event_pandemic_desc: "Khách e ngại tụ tập, cầu giảm mạnh.",
+    event_competition: "⚡ Cạnh tranh mới — Cầu GIẢM 20%",
+    event_competition_desc: "Đối thủ mới mở cùng khu — chia sẻ khách.",
+    event_inflation: "📈 Lạm phát — Chi phí TĂNG 15%",
+    event_inflation_desc: "Nguyên liệu và lương đều tăng theo lạm phát.",
+    event_festival: "🎉 Sự kiện địa phương — Cầu TĂNG 50%",
+    event_festival_desc: "Lễ hội lớn — khách đông đột biến.",
+    event_subsidy: "💼 Hỗ trợ chính phủ — FC GIẢM 20%",
+    event_subsidy_desc: "Giảm thuế và phí thuê mặt bằng.",
+  },
+};
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('ec1314_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang][key]) {
+      if (TRANSLATIONS[lang][key].includes('<')) {
+        el.innerHTML = TRANSLATIONS[lang][key];
+      } else {
+        el.textContent = TRANSLATIONS[lang][key];
+      }
+    }
+  });
+  renderSetupPanel();
+  renderPlayPanel();
+  renderScoreboard();
+  renderHistory();
+}
+
+function showToast(message, type = 'info', duration = 3500) {
+  let container = document.getElementById('toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.setAttribute('role', 'status');
+  toast.textContent = message;
+  container.appendChild(toast);
+  const remove = () => {
+    toast.classList.add('leaving');
+    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+  };
+  toast.addEventListener('click', remove);
+  setTimeout(remove, duration);
+}
+
+// Instructor keyboard shortcuts — active only on the Play tab, and never
+// while typing in a field. Keys: S start · P pause · E event · F finalize · N next.
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'select' || tag === 'textarea' || e.target.isContentEditable) return;
+  const playActive = document.getElementById('panel-play')?.classList.contains('active');
+  if (!playActive) return;
+  const actions = {
+    s: startTimer, p: pauseTimer, e: triggerRandomEvent,
+    f: endCurrentRound, n: goToNextRound,
+  };
+  const fn = actions[e.key.toLowerCase()];
+  if (fn) { e.preventDefault(); fn(); }
+});
+
+function t(key, ...args) {
+  let str = TRANSLATIONS[currentLang][key] || key;
+  args.forEach((a, i) => {
+    str = str.replace('%' + (i === 0 ? 'd' : 's'), a);
+    str = str.replace('%s', a);
+    str = str.replace('%d', a);
+  });
+  return str;
+}
+
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+function toggleTheme() {
+  const current = document.body.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', next);
+  localStorage.setItem('ec1314_theme', next);
+}
+
+// ============================================================
+// STATE MANAGEMENT
+// ============================================================
+const STORAGE_KEY = "ec1314_game_v3";
+
+const DEFAULT_GROUPS = [
+  { id: 1, name: "TEAM 01", company: "", color: "var(--g1)" },
+  { id: 2, name: "TEAM 02", company: "", color: "var(--g2)" },
+  { id: 3, name: "TEAM 03", company: "", color: "var(--g3)" },
+  { id: 4, name: "TEAM 04", company: "", color: "var(--g4)" },
+  { id: 5, name: "TEAM 05", company: "", color: "var(--g5)" },
+];
+
+const EVENT_POOL = [
+  { nameKey: "event_tet", descKey: "event_tet_desc", demandMultiplier: 1.3, costMultiplier: 1.0 },
+  { nameKey: "event_pandemic", descKey: "event_pandemic_desc", demandMultiplier: 0.6, costMultiplier: 1.0 },
+  { nameKey: "event_competition", descKey: "event_competition_desc", demandMultiplier: 0.8, costMultiplier: 1.0 },
+  { nameKey: "event_inflation", descKey: "event_inflation_desc", demandMultiplier: 1.0, costMultiplier: 1.15 },
+  { nameKey: "event_festival", descKey: "event_festival_desc", demandMultiplier: 1.5, costMultiplier: 1.05 },
+  { nameKey: "event_subsidy", descKey: "event_subsidy_desc", demandMultiplier: 1.0, costMultiplier: 0.92 },
+];
+
+let state = {
+  courseName: "Mô phỏng tình huống trong kinh doanh (EC1314)",
+  classCode: "252b_EC1314_1_tructiep",
+  semester: "HK 2B · 2025–2026",
+  teacherName: "PhD Candidate Do Thuy Huong",
+  unitName: "FEL_VLUTE",
+  initialCash: 100,
+  timeUnit: "quy",
+  roundDuration: 10,
+  currentRound: 0,
+  totalRounds: 6,
+  groups: JSON.parse(JSON.stringify(DEFAULT_GROUPS)).map(g => ({
+    ...g,
+    cash: 100,
+    totalRevenue: 0,
+    totalCost: 0,
+    totalProfit: 0,
+    mosHistory: [],
+    rounds: [],
+    currentDecision: { price: 0, plannedQ: 0, marketing: 0 },
+    locked: false,
+  })),
+  currentEvent: null,
+  timer: { running: false, seconds: 600 },
+};
+
+let timerInterval = null;
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (data) {
+    try {
+      state = JSON.parse(data);
+      return true;
+    } catch (e) {
+      console.error("Load error:", e);
+    }
+  }
+  return false;
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(name, evt) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  
+  if (name === 'play') renderPlayPanel();
+  if (name === 'scoreboard') renderScoreboard();
+  if (name === 'history') renderHistory();
+}
+
+// ============================================================
+// SETUP
+// ============================================================
+function renderSetupPanel() {
+  const container = document.getElementById('groupsInputContainer');
+  if (!container) return;
+  container.innerHTML = state.groups.map((g, i) => `
+    <div class="field-row">
+      <div class="group-badge" style="color: ${g.color}">${g.name.replace('TEAM ', 'T')}</div>
+      <input type="text" class="field-input" id="groupCompany_${i}" value="${g.company}" 
+             placeholder="${t('company_placeholder')}">
+    </div>
+  `).join('');
+
+  const cn = document.getElementById('courseName'); if (cn) cn.value = state.courseName;
+  const cc = document.getElementById('classCode'); if (cc) cc.value = state.classCode;
+  const sm = document.getElementById('semester'); if (sm) sm.value = state.semester;
+  const tn = document.getElementById('teacherName'); if (tn) tn.value = state.teacherName;
+  const un = document.getElementById('unitName'); if (un) un.value = state.unitName;
+  const ic = document.getElementById('initialCash'); if (ic) ic.value = state.initialCash;
+  const rd = document.getElementById('roundDuration'); if (rd) rd.value = state.roundDuration;
+  const tu = document.getElementById('timeUnit'); if (tu) tu.value = state.timeUnit;
+}
+
+function saveSetupAndStart() {
+  state.courseName = document.getElementById('courseName').value;
+  state.classCode = document.getElementById('classCode').value;
+  state.semester = document.getElementById('semester').value;
+  state.teacherName = document.getElementById('teacherName').value;
+  state.unitName = document.getElementById('unitName').value;
+  state.initialCash = parseInt(document.getElementById('initialCash').value) || 100;
+  state.roundDuration = parseInt(document.getElementById('roundDuration').value) || 10;
+  state.timeUnit = document.getElementById('timeUnit').value;
+  
+  state.groups.forEach((g, i) => {
+    const inp = document.getElementById('groupCompany_' + i);
+    g.company = (inp ? inp.value : '') || `${currentLang === 'en' ? 'Company' : 'Doanh nghiệp'} ${g.name}`;
+    g.cash = state.initialCash;
+  });
+  
+  if (state.currentRound === 0) state.currentRound = 1;
+  state.timer.seconds = state.roundDuration * 60;
+  
+  saveState();
+  updateUI();
+  
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab')[1].classList.add('active');
+  document.getElementById('panel-play').classList.add('active');
+  renderPlayPanel();
+}
+
+// ============================================================
+// PLAY PANEL
+// ============================================================
+function renderPlayPanel() {
+  const container = document.getElementById('groupsContainer');
+  if (!container) return;
+  
+  const crn = document.getElementById('currentRoundNum');
+  if (crn) crn.textContent = state.currentRound;
+  
+  container.innerHTML = state.groups.map((g, i) => {
+    const lastRound = g.rounds.length > 0 ? g.rounds[g.rounds.length - 1] : null;
+    const lockedClass = g.locked ? 'locked' : '';
+    const statusClass = g.locked ? 'done' : '';
+    const statusText = g.locked ? '✓ ' + t('status_locked') : '⋯ ' + t('status_deciding');
+    
+    return `
+      <div class="group-card ${lockedClass}" id="groupCard_${i}" style="--group-color: ${g.color}">
+        <div class="group-header">
+          <div class="group-name">${g.name}</div>
+          <div class="group-status ${statusClass}">${statusText}</div>
+        </div>
+        <div class="group-company">${g.company || '—'}</div>
+        
+        <div class="group-stats">
+          <div class="stat-row">
+            <span class="stat-label">${currentLang === 'en' ? 'Cash' : 'Tiền mặt'}</span>
+            <span class="stat-value ${g.cash < 0 ? 'negative' : ''}">${g.cash.toFixed(1)}M</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">${currentLang === 'en' ? 'Total Profit' : 'LN tích lũy'}</span>
+            <span class="stat-value ${g.totalProfit < 0 ? 'negative' : (g.totalProfit > 0 ? 'positive' : '')}">${g.totalProfit >= 0 ? '+' : ''}${g.totalProfit.toFixed(1)}M</span>
+          </div>
+          ${lastRound ? `
+            <div class="stat-row">
+              <span class="stat-label">${currentLang === 'en' ? 'Last round' : 'Vòng trước'}</span>
+              <span class="stat-value ${lastRound.profit < 0 ? 'negative' : 'positive'}">${lastRound.profit >= 0 ? '+' : ''}${lastRound.profit.toFixed(1)}M</span>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="decision-section">
+          <div class="field">
+            <label class="field-label">${t('label_price')}</label>
+            <input type="number" class="field-input" id="price_${i}" value="${g.currentDecision.price || ''}" 
+                   placeholder="35" ${g.locked ? 'disabled' : ''}>
+          </div>
+          <div class="field">
+            <label class="field-label">${t('label_planned_q')}</label>
+            <input type="number" class="field-input" id="plannedQ_${i}" value="${g.currentDecision.plannedQ || ''}" 
+                   placeholder="1000" ${g.locked ? 'disabled' : ''}>
+          </div>
+          <div class="field">
+            <label class="field-label">${t('label_marketing')}</label>
+            <input type="number" class="field-input" id="marketing_${i}" value="${g.currentDecision.marketing || ''}" 
+                   placeholder="5" step="0.1" ${g.locked ? 'disabled' : ''}>
+          </div>
+          ${!g.locked ? `
+            <button class="btn btn-success" style="width: 100%; margin-top: 6px;" onclick="lockGroup(${i})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              ${t('btn_lock')}
+            </button>
+          ` : `
+            <button class="btn btn-warning" style="width: 100%; margin-top: 6px;" onclick="unlockGroup(${i})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+              ${t('btn_unlock')}
+            </button>
+          `}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function lockGroup(i) {
+  const g = state.groups[i];
+  g.currentDecision.price = parseFloat(document.getElementById('price_' + i).value) || 0;
+  g.currentDecision.plannedQ = parseFloat(document.getElementById('plannedQ_' + i).value) || 0;
+  g.currentDecision.marketing = parseFloat(document.getElementById('marketing_' + i).value) || 0;
+  
+  if (g.currentDecision.price <= 0 || g.currentDecision.plannedQ <= 0) {
+    showToast(t('alert_invalid_input', g.name), 'error');
+    return;
+  }
+  g.locked = true;
+  saveState();
+  renderPlayPanel();
+}
+
+function unlockGroup(i) {
+  state.groups[i].locked = false;
+  saveState();
+  renderPlayPanel();
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function updateTimerDisplay() {
+  const sec = state.timer.seconds;
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  const display = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  const tEl = document.getElementById('timer');
+  if (tEl) {
+    tEl.textContent = display;
+    if (sec < 60 && state.timer.running) tEl.classList.add('danger');
+    else tEl.classList.remove('danger');
+  }
+}
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  state.timer.running = true;
+  timerInterval = setInterval(() => {
+    if (state.timer.seconds > 0) {
+      state.timer.seconds--;
+      updateTimerDisplay();
+    } else {
+      pauseTimer();
+      showToast('⏰ ' + t('alert_time_up'), 'warn');
+    }
+  }, 1000);
+}
+
+function pauseTimer() {
+  state.timer.running = false;
+  if (timerInterval) clearInterval(timerInterval);
+}
+
+function resetTimer() {
+  pauseTimer();
+  state.timer.seconds = state.roundDuration * 60;
+  updateTimerDisplay();
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+function triggerRandomEvent() {
+  const event = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+  state.currentEvent = event;
+  saveState();
+  
+  document.getElementById('eventDisplay').innerHTML = `
+    <div class="event-card">
+      <h3>⚡ ${t('event_round', state.currentRound)} ${t(event.nameKey)}</h3>
+      <p><strong>${t('impact')}</strong> ${t(event.descKey)}</p>
+      <div class="multipliers">
+        <span>${t('demand_mul')} <strong>×${event.demandMultiplier}</strong></span>
+        <span>${t('cost_mul')} <strong>×${event.costMultiplier}</strong></span>
+      </div>
+      <p class="event-warning">⚠ ${t('event_warning')}</p>
+    </div>
+  `;
+}
+
+// ============================================================
+// FINALIZE ROUND
+// ============================================================
+function endCurrentRound() {
+  const unlocked = state.groups.filter(g => !g.locked);
+  if (unlocked.length > 0) {
+    if (!confirm(t('alert_unlocked', unlocked.length, unlocked.map(g => g.name).join(', ')))) return;
+  }
+  
+  const event = state.currentEvent || { demandMultiplier: 1.0, costMultiplier: 1.0, nameKey: 'none' };
+  
+  state.groups.forEach(g => {
+    const d = g.currentDecision;
+    if (d.price === 0 || d.plannedQ === 0) {
+      const penaltyFC = 30 * event.costMultiplier;
+      g.rounds.push({
+        round: state.currentRound, price: 0, plannedQ: 0, marketing: 0,
+        actualQ: 0, revenue: 0, cost: penaltyFC, profit: -penaltyFC,
+        mos: -100, event: event.nameKey,
+      });
+      g.totalCost += penaltyFC;
+      g.totalProfit -= penaltyFC;
+      g.cash -= penaltyFC;
+      return;
+    }
+    
+    const a = 3000, b = 50;
+    let demandPotential = a - b * d.price;
+    const marketingBoost = Math.min(d.marketing * 0.05, 0.5);
+    demandPotential *= (1 + marketingBoost);
+    demandPotential *= event.demandMultiplier;
+    
+    const actualQ = Math.max(0, Math.min(d.plannedQ, demandPotential));
+    const revenue = (d.price * actualQ) / 1000;
+    const variableCostPerUnit = 12;
+    const variableCost = (variableCostPerUnit * actualQ) / 1000;
+    const fixedCost = 30 * event.costMultiplier;
+    const marketingCost = d.marketing;
+    const totalCost = variableCost + fixedCost + marketingCost;
+    const profit = revenue - totalCost;
+    const cmPerUnit = (d.price - variableCostPerUnit) / 1000;
+    const bepQ = cmPerUnit > 0 ? (fixedCost + marketingCost) / cmPerUnit : Infinity;
+    const mos = actualQ > 0 ? ((actualQ - bepQ) / actualQ) * 100 : -100;
+    
+    g.rounds.push({
+      round: state.currentRound,
+      price: d.price, plannedQ: d.plannedQ, marketing: d.marketing,
+      actualQ: Math.round(actualQ), revenue, cost: totalCost, profit,
+      mos, bepQ: Math.round(bepQ),
+      event: event.nameKey,
+    });
+    
+    g.totalRevenue += revenue;
+    g.totalCost += totalCost;
+    g.totalProfit += profit;
+    g.cash += profit;
+    g.mosHistory.push(mos);
+  });
+  
+  saveState();
+  showRoundSummary();
+}
+
+function showRoundSummary() {
+  let html = `<table class="data-table" style="margin-top: 10px;"><thead><tr>`;
+  const headers = [
+    currentLang === 'en' ? 'Team' : 'Nhóm',
+    currentLang === 'en' ? 'Price' : 'Giá',
+    'Q (' + (currentLang === 'en' ? 'planned' : 'DK') + ')',
+    'Q (' + (currentLang === 'en' ? 'actual' : 'TT') + ')',
+    currentLang === 'en' ? 'Revenue' : 'DT',
+    currentLang === 'en' ? 'Cost' : 'CP',
+    currentLang === 'en' ? 'Profit' : 'LN',
+    'MoS',
+  ];
+  headers.forEach(h => html += `<th>${h}</th>`);
+  html += `</tr></thead><tbody>`;
+  
+  state.groups.forEach(g => {
+    const r = g.rounds[g.rounds.length - 1];
+    const profitColor = r.profit >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)';
+    const mosColor = r.mos >= 30 ? 'var(--success-glow)' : (r.mos >= 15 ? 'var(--warning-glow)' : 'var(--danger-glow)');
+    html += `<tr>
+      <td><strong style="color: ${g.color}; font-family: var(--font-mono);">${g.name}</strong></td>
+      <td>${r.price}k</td>
+      <td>${r.plannedQ}</td>
+      <td><strong>${r.actualQ}</strong></td>
+      <td>${r.revenue.toFixed(1)}M</td>
+      <td>${r.cost.toFixed(1)}M</td>
+      <td style="color: ${profitColor}; font-weight: 700;">${r.profit >= 0 ? '+' : ''}${r.profit.toFixed(1)}M</td>
+      <td style="color: ${mosColor}; font-weight: 700;">${r.mos.toFixed(0)}%</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  
+  if (state.currentEvent) {
+    html = `<div class="info-box" style="margin-bottom: 16px;"><strong>⚡ ${t('event_applied')}</strong> ${t(state.currentEvent.nameKey)}</div>` + html;
+  }
+  
+  showModal(t('modal_round_finalized', state.currentRound), html);
+}
+
+function goToNextRound() {
+  if (state.currentRound >= state.totalRounds) {
+    showToast('🏆 ' + t('alert_done'), 'success');
+    return;
+  }
+  if (state.groups[0].rounds.length < state.currentRound) {
+    if (!confirm(t('confirm_skip'))) return;
+  }
+  state.currentRound++;
+  state.currentEvent = null;
+  state.groups.forEach(g => {
+    g.locked = false;
+    g.currentDecision = { price: 0, plannedQ: 0, marketing: 0 };
+  });
+  state.timer.seconds = state.roundDuration * 60;
+  document.getElementById('eventDisplay').innerHTML = '';
+  saveState();
+  updateUI();
+  renderPlayPanel();
+}
+
+// ============================================================
+// SCOREBOARD
+// ============================================================
+function renderScoreboard() {
+  const container = document.getElementById('quickStatsContainer');
+  if (!container) return;
+  
+  const totalGroups = state.groups.length;
+  const playedRounds = state.groups[0].rounds.length;
+  const totalProfit = state.groups.reduce((sum, g) => sum + g.totalProfit, 0);
+  const leadingGroup = [...state.groups].sort((a, b) => b.totalProfit - a.totalProfit)[0];
+  
+  container.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="kpi-label">${t('kpi_teams')}</div>
+      <div class="kpi-value">${totalGroups}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-glow);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="kpi-label">${t('kpi_rounds_played')}</div>
+      <div class="kpi-value">${playedRounds}<span style="font-size: 16px; color: var(--text-3);">/${state.totalRounds}</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background: ${totalProfit >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${totalProfit >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)'};">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="kpi-label">${t('kpi_total_profit')}</div>
+      <div class="kpi-value ${totalProfit >= 0 ? 'positive' : 'negative'}">${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(1)}M</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--g4);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      </div>
+      <div class="kpi-label">${t('kpi_leader')}</div>
+      <div class="kpi-value" style="color: ${leadingGroup.color}; font-size: 22px;">${leadingGroup.name}</div>
+    </div>
+  `;
+  
+  const sorted = [...state.groups].sort((a, b) => b.totalProfit - a.totalProfit);
+  const tbody = document.querySelector('#scoreboardTable tbody');
+  if (!tbody) return;
+  
+  tbody.innerHTML = sorted.map((g, i) => {
+    const mosAvg = g.mosHistory.length > 0 
+      ? g.mosHistory.reduce((s, m) => s + m, 0) / g.mosHistory.length : 0;
+    const rankClass = i < 3 ? `rank-${i+1}` : '';
+    const profitColor = g.totalProfit >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)';
+    const mosColor = mosAvg >= 30 ? 'var(--success-glow)' : (mosAvg >= 15 ? 'var(--warning-glow)' : 'var(--danger-glow)');
+    const medals = ['🥇', '🥈', '🥉', '', ''];
+    
+    return `
+      <tr class="${rankClass}">
+        <td><span class="rank-medal">${i+1} ${medals[i]}</span></td>
+        <td><strong style="color: ${g.color}; font-family: var(--font-mono);">${g.name}</strong></td>
+        <td>${g.company}</td>
+        <td>${g.totalRevenue.toFixed(1)}M</td>
+        <td>${g.totalCost.toFixed(1)}M</td>
+        <td style="color: ${profitColor}; font-weight: 700;">${g.totalProfit >= 0 ? '+' : ''}${g.totalProfit.toFixed(1)}M</td>
+        <td>${g.cash.toFixed(1)}M</td>
+        <td style="color: ${mosColor}; font-weight: 700;">${mosAvg.toFixed(0)}%</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function renderHistory() {
+  const container = document.getElementById('historyContainer');
+  if (!container) return;
+  
+  if (state.groups[0].rounds.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div class="empty-state-title">${t('no_data_title')}</div>
+      <div class="empty-state-text">${t('no_data')}</div>
+    </div>`;
+    return;
+  }
+  
+  const maxAbs = Math.max(...state.groups.map(g => Math.abs(g.totalProfit)), 10);
+  
+  let html = `<div class="card">
+    <div class="card-title">
+      <div class="card-title-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <h2>${t('chart_title')}</h2>
+    </div>
+    <div class="chart-section">`;
+  
+  state.groups.forEach(g => {
+    const widthPct = Math.abs(g.totalProfit) / maxAbs * 90;
+    html += `
+      <div class="chart-row" style="--group-color: ${g.color}">
+        <div class="chart-label">${g.name}</div>
+        <div class="chart-bar">
+          <div class="chart-fill" style="width: ${widthPct}%; background: linear-gradient(90deg, ${g.color}, ${g.color}DD);"></div>
+        </div>
+        <div class="chart-value" style="color: ${g.totalProfit >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)'};">
+          ${g.totalProfit >= 0 ? '+' : ''}${g.totalProfit.toFixed(1)}M
+        </div>
+      </div>
+    `;
+  });
+  html += '</div></div>';
+  
+  html += `<div class="card" style="margin-top: 20px; padding: 0; overflow: hidden;">
+    <div style="padding: 20px 24px 16px;">
+      <div class="card-title" style="margin-bottom: 0;">
+        <div class="card-title-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        </div>
+        <h2>${t('chart_per_round')}</h2>
+      </div>
+    </div>
+    <table class="data-table" style="border: none; border-radius: 0;">
+      <thead><tr><th>${t('th_round')}</th>`;
+  state.groups.forEach(g => {
+    html += `<th style="color: ${g.color};">${g.name}</th>`;
+  });
+  html += `<th>${t('th_event')}</th></tr></thead><tbody>`;
+  
+  for (let r = 0; r < state.groups[0].rounds.length; r++) {
+    html += `<tr><td><strong>${r + 1}</strong></td>`;
+    state.groups.forEach(g => {
+      const round = g.rounds[r];
+      const color = round.profit >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)';
+      html += `<td style="color: ${color}; font-weight: 700;">${round.profit >= 0 ? '+' : ''}${round.profit.toFixed(1)}M</td>`;
+    });
+    const evKey = state.groups[0].rounds[r].event;
+    html += `<td style="font-size: 12px; color: var(--text-3);">${evKey === 'none' ? '—' : t(evKey)}</td></tr>`;
+  }
+  html += '</tbody></table></div>';
+  
+  container.innerHTML = html;
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function showModal(title, body) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+function updateUI() {
+  const rb = document.getElementById('roundBadge');
+  if (rb) {
+    rb.innerHTML = `<span data-i18n="round">${t('round')}</span>: ${state.currentRound} / ${state.totalRounds}`;
+  }
+  updateTimerDisplay();
+}
+
+function exportData() {
+  const dataStr = JSON.stringify(state, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bizarena_FEL_VLUTE_${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportLeaderboardCSV() {
+  const playedRounds = state.groups[0].rounds.length;
+  if (playedRounds === 0) { showToast(t('no_data'), 'warn'); return; }
+
+  const sorted = [...state.groups].sort((a, b) => b.totalProfit - a.totalProfit);
+  const esc = (v) => {
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const header = ['Rank', 'Team', 'Company', 'Revenue (M VND)', 'Cost (M VND)',
+    'Profit (M VND)', 'Cash (M VND)', 'MoS Avg (%)'];
+  const rows = sorted.map((g, i) => {
+    const mosAvg = g.mosHistory.length
+      ? g.mosHistory.reduce((s, m) => s + m, 0) / g.mosHistory.length : 0;
+    return [i + 1, g.name, g.company, g.totalRevenue.toFixed(1), g.totalCost.toFixed(1),
+      g.totalProfit.toFixed(1), g.cash.toFixed(1), mosAvg.toFixed(0)].map(esc).join(',');
+  });
+  const csv = [header.map(esc).join(','), ...rows].join('\n');
+
+  // UTF-8 BOM so Excel renders Vietnamese characters correctly.
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `bizarena_leaderboard_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(t('csv_exported'), 'success');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      state = JSON.parse(e.target.result);
+      saveState();
+      updateUI();
+      renderSetupPanel();
+      renderPlayPanel();
+      showToast('✓ ' + t('import_success'), 'success');
+    } catch (err) {
+      showToast('❌ ' + t('import_error'), 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAll() {
+  if (!confirm('⚠ ' + t('confirm_reset_1'))) return;
+  if (!confirm(t('confirm_reset_2'))) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  const theme = localStorage.getItem('ec1314_theme') || 'dark';
+  document.body.setAttribute('data-theme', theme);
+  
+  const lang = localStorage.getItem('ec1314_lang') || 'en';
+  
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.addEventListener('click', () => setLang(b.dataset.lang));
+  });
+  
+  loadState();
+  setLang(lang);
+  updateUI();
+});
+</script>
+</body>
+</html>
