@@ -1173,6 +1173,50 @@
       scroll-behavior: auto !important;
     }
   }
+
+  /* Right-align numeric columns of the leaderboard for clean scanning
+     (Revenue, Cost, Profit, Cash, MoS — columns 4–8). Scoped so other
+     tables are unaffected. */
+  #scoreboardTable th:nth-child(n+4),
+  #scoreboardTable td:nth-child(n+4) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Composed empty state — a "getting started" view instead of bare text. */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 56px 24px;
+    text-align: center;
+    background: var(--bg-1);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--r-lg);
+  }
+  .empty-state-icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--r-md);
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+  }
+  .empty-state-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-0);
+  }
+  .empty-state-text {
+    font-size: 13px;
+    color: var(--text-3);
+    max-width: 42ch;
+    line-height: 1.6;
+  }
 </style>
 </head>
 <body data-theme="dark">
@@ -1687,6 +1731,7 @@ const TRANSLATIONS = {
     kpi_rounds_played: "Rounds Played",
     kpi_total_profit: "Total Profit",
     kpi_leader: "Current Leader",
+    no_data_title: "No results yet",
     no_data: "No rounds completed yet. Switch to Play tab to start Round 1.",
     chart_title: "Cumulative Profit by Team",
     chart_per_round: "Per-Round Profit Breakdown",
@@ -1825,6 +1870,7 @@ const TRANSLATIONS = {
     kpi_rounds_played: "Vòng đã chơi",
     kpi_total_profit: "Tổng LN cả lớp",
     kpi_leader: "Đang dẫn đầu",
+    no_data_title: "Chưa có kết quả",
     no_data: "Chưa có vòng nào hoàn thành. Quay lại tab Chơi để bắt đầu vòng 1.",
     chart_title: "Lợi nhuận lũy kế các nhóm",
     chart_per_round: "Chi tiết lợi nhuận từng vòng",
@@ -2395,7 +2441,13 @@ function renderHistory() {
   if (!container) return;
   
   if (state.groups[0].rounds.length === 0) {
-    container.innerHTML = `<div class="info-box">${t('no_data')}</div>`;
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div class="empty-state-title">${t('no_data_title')}</div>
+      <div class="empty-state-text">${t('no_data')}</div>
+    </div>`;
     return;
   }
   
