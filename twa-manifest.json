@@ -1,0 +1,27 @@
+{
+  "packageId": "com.dothuyhuong.bizarena",
+  "host": "thuyhuongctu.github.io",
+  "name": "BizArena",
+  "launcherName": "BizArena",
+  "display": "standalone",
+  "themeColor": "#2554F4",
+  "navigationColor": "#0C1526",
+  "navigationColorDark": "#0B111E",
+  "backgroundColor": "#F4F6F9",
+  "startUrl": "/bss/",
+  "iconUrl": "https://thuyhuongctu.github.io/bss/icons/icon-512.png",
+  "maskableIconUrl": "https://thuyhuongctu.github.io/bss/icons/icon-maskable-512.png",
+  "appVersionName": "1.2",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "bizarena"
+  },
+  "enableNotifications": false,
+  "orientation": "default",
+  "fallbackType": "customtabs",
+  "features": {},
+  "shortcuts": [],
+  "webManifestUrl": "https://thuyhuongctu.github.io/bss/manifest.json",
+  "fullScopeUrl": "https://thuyhuongctu.github.io/bss/"
+}
