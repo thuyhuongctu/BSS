@@ -3,7 +3,7 @@
 ============================================================
 BizArena — Mô phỏng tình huống trong kinh doanh
 Business Situation Simulation (EC1314)
-Phiên bản / Version: 2.1 — 07/2026 (bổ sung Bảng điều hành theo vai trò C-Suite)
+Phiên bản / Version: 2.2 — 07/2026 (chuẩn hóa theo đặc tả logic & kịch bản giảng dạy)
 Tác giả / Author: PhD Candidate Do Thuy Huong
 Bản quyền / Copyright © 2026 Do Thuy Huong. All rights reserved.
 Tác phẩm do tác giả tự sáng tạo, không sử dụng kinh phí tổ chức.
@@ -15,7 +15,7 @@ Chương trình máy tính đăng ký quyền tác giả.
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="application-name" content="BizArena">
-<meta name="version" content="2.1">
+<meta name="version" content="2.2">
 <meta name="author" content="PhD Candidate Do Thuy Huong">
 <meta name="copyright" content="© 2026 Do Thuy Huong. All rights reserved.">
 <meta name="theme-color" content="#2554F4">
@@ -341,6 +341,7 @@ Chương trình máy tính đăng ký quyền tác giả.
 
     --timer-bg: #0C1526;
     --timer-fg: #EAF1FF;
+    --cream: #F2EFE9;
 
     --font-display: 'Plus Jakarta Sans', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
@@ -393,6 +394,7 @@ Chương trình máy tính đăng ký quyền tác giả.
 
     --timer-bg: #060B15;
     --timer-fg: #EAF1FF;
+    --cream: #111827;
 
     --shadow-card: 0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.35);
     --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.5);
@@ -445,8 +447,10 @@ Chương trình máy tính đăng ký quyền tác giả.
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
-    padding: 8px 4px 14px;
-    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
     margin-bottom: 18px;
   }
   .inst-left {
@@ -878,11 +882,12 @@ Chương trình máy tính đăng ký quyền tác giả.
   }
 
   .btn-danger {
-    background: transparent;
-    color: var(--danger);
-    border-color: var(--danger);
+    background: var(--danger);
+    color: #fff;
   }
-  .btn-danger:hover { background: var(--danger); color: #fff; }
+  .btn-danger:hover {
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--danger) 35%, transparent);
+  }
 
   .btn-warning {
     background: var(--warning);
@@ -1450,6 +1455,19 @@ Chương trình máy tính đăng ký quyền tác giả.
   .alloc-row input[type=range] { width: 100%; accent-color: var(--primary); }
   .alloc-row .alloc-val { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--text-0); text-align: right; font-variant-numeric: tabular-nums; }
 
+  /* ============ PRINT REPORT ============ */
+  #printReport { display: none; }
+  @media print {
+    .app, .modal-overlay { display: none !important; }
+    body::before { display: none; }
+    #printReport { display: block; font-family: var(--font-body); color: #000; padding: 8px; }
+    #printReport h1 { font-size: 20px; margin-bottom: 4px; }
+    #printReport h2 { font-size: 15px; margin: 18px 0 8px; }
+    #printReport p { font-size: 12px; color: #333; }
+    #printReport table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    #printReport th, #printReport td { border: 1px solid #999; padding: 6px 8px; text-align: left; }
+  }
+
   /* ============ RESPONSIVE ============ */
   @media (max-width: 900px) {
     .app { padding: 14px 14px 0; }
@@ -1628,7 +1646,7 @@ Chương trình máy tính đăng ký quyền tác giả.
         </div>
         <div class="field">
           <label class="field-label" data-i18n="initial_cash">Starting Capital (Million VND)</label>
-          <input type="number" class="field-input" id="initialCash" value="100">
+          <input type="number" class="field-input" id="initialCash" value="500">
         </div>
         <div class="field">
           <label class="field-label" data-i18n="time_unit">Time Unit per Round</label>
@@ -1703,7 +1721,7 @@ Chương trình máy tính đăng ký quyền tác giả.
         </button>
       </div>
       <div class="control-row major">
-        <button class="btn btn-success" onclick="endCurrentRound()">
+        <button class="btn btn-danger" onclick="endCurrentRound()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
           <span data-i18n="btn_finalize">Finalize Round & Compute</span>
         </button>
@@ -1851,7 +1869,7 @@ Chương trình máy tính đăng ký quyền tác giả.
         <strong>Attractiveness:</strong> A = (P̄ / P)^1.5 × (1 + min(marketing × 0.05, 0.5))<br>
         <strong>Demand_i:</strong> Q_market × A_i / ΣA → Q_sold = min(Q_planned, Demand_i) + tái phân bổ cầu dư<br>
         <strong data-i18n="formula_revenue">Revenue:</strong> DT = P × Q_sold<br>
-        <strong data-i18n="formula_cost">Cost:</strong> TC = FC(30M) × event + 12k × Q_sold + Marketing<br>
+        <strong data-i18n="formula_cost">Cost:</strong> TC = FC(30M) × event + 12k × Q_planned + Marketing &nbsp;(biến phí theo sản lượng sản xuất — rủi ro tồn kho)<br>
         <strong data-i18n="formula_profit">Profit:</strong> LN = DT − TC<br>
         <strong>MoS:</strong> (Q_sold − Q*) / Q_sold × 100%
       </div>
@@ -1874,6 +1892,14 @@ Chương trình máy tính đăng ký quyền tác giả.
         <span data-i18n="btn_import">Import JSON</span>
       </button>
       <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+      <button class="btn btn-primary" onclick="printReport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span data-i18n="btn_pdf">Báo cáo PDF</span>
+      </button>
+      <button class="btn btn-ghost" onclick="emailReport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span data-i18n="btn_email">Email kết quả</span>
+      </button>
       <button class="btn btn-danger" onclick="resetAll()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         <span data-i18n="btn_reset_all">Reset All</span>
@@ -1884,7 +1910,7 @@ Chương trình máy tính đăng ký quyền tác giả.
   <!-- ============ FOOTER ============ -->
   <footer class="app-footer">
     <div class="footer-text">
-      <span>BizArena v2.1 · © 2026</span>
+      <span>BizArena v2.2 · © 2026</span>
       <span class="divider">|</span>
       <span class="accent-name">PhD Candidate Do Thuy Huong</span>
       <span class="divider">|</span>
@@ -2104,6 +2130,9 @@ const TRANSLATIONS = {
     cco_nps_note: "Availability adjusted by price vs. industry average.",
     cco_hist: "Demand vs. served by round",
     cco_metrics_note: "Simulated indicators derived from round data — for class discussion.",
+    btn_pdf: "PDF Report",
+    btn_email: "Email results",
+    warn_price_below_vc: "Warning: price is at or below unit variable cost (12k/unit) — every unit sold loses money. Lock anyway?",
   },
   vi: {
     tagline: "Mô phỏng tình huống trong kinh doanh · 6 vòng · EC1314",
@@ -2296,6 +2325,9 @@ const TRANSLATIONS = {
     cco_nps_note: "Tỷ lệ đáp ứng điều chỉnh theo giá so với trung bình ngành.",
     cco_hist: "Nhu cầu và đáp ứng theo vòng",
     cco_metrics_note: "Chỉ số mô phỏng suy diễn từ dữ liệu vòng chơi — phục vụ thảo luận trên lớp.",
+    btn_pdf: "Báo cáo PDF",
+    btn_email: "Email kết quả",
+    warn_price_below_vc: "Cảnh báo: giá bán đang bằng hoặc thấp hơn biến phí 12k/SP — mỗi sản phẩm bán ra đều lỗ. Vẫn khóa quyết định?",
   },
 };
 
@@ -2410,7 +2442,8 @@ const BizArenaEngine = {
       const d = x.d;
       const actualQ = sold[k];
       const revenue = (d.price * actualQ) / 1000;
-      const variableCost = (p.variableCostPerUnit * actualQ) / 1000;
+      // Biến phí tính trên sản lượng SẢN XUẤT (Q_planned) — rủi ro tồn kho theo đặc tả
+      const variableCost = (p.variableCostPerUnit * d.plannedQ) / 1000;
       const fixedCost = p.fixedCost * event.costMultiplier;
       const totalCost = variableCost + fixedCost + d.marketing;
       const profit = revenue - totalCost;
@@ -2441,11 +2474,11 @@ const BizArenaEngine = {
 const STORAGE_KEY = "ec1314_game_v4";
 
 const DEFAULT_GROUPS = [
-  { id: 1, name: "TEAM 01", company: "", color: "var(--g1)" },
-  { id: 2, name: "TEAM 02", company: "", color: "var(--g2)" },
-  { id: 3, name: "TEAM 03", company: "", color: "var(--g3)" },
-  { id: 4, name: "TEAM 04", company: "", color: "var(--g4)" },
-  { id: 5, name: "TEAM 05", company: "", color: "var(--g5)" },
+  { id: 1, name: "ALPHA", company: "", color: "var(--g1)" },
+  { id: 2, name: "BETA", company: "", color: "var(--g2)" },
+  { id: 3, name: "GAMMA", company: "", color: "var(--g3)" },
+  { id: 4, name: "DELTA", company: "", color: "var(--g4)" },
+  { id: 5, name: "EPSILON", company: "", color: "var(--g5)" },
 ];
 
 const EVENT_POOL = [
@@ -2463,14 +2496,14 @@ let state = {
   semester: "HK 2B · 2025–2026",
   teacherName: "PhD Candidate Do Thuy Huong",
   unitName: "",
-  initialCash: 100,
+  initialCash: 500,
   timeUnit: "quy",
   roundDuration: 10,
   currentRound: 0,
   totalRounds: 6,
   groups: JSON.parse(JSON.stringify(DEFAULT_GROUPS)).map(g => ({
     ...g,
-    cash: 100,
+    cash: 500,
     totalRevenue: 0,
     totalCost: 0,
     totalProfit: 0,
@@ -2525,7 +2558,7 @@ function renderSetupPanel() {
   if (!container) return;
   container.innerHTML = state.groups.map((g, i) => `
     <div class="field-row">
-      <div class="group-badge" style="color: ${g.color}">${g.name.replace('TEAM ', 'T')}</div>
+      <div class="group-badge" style="color: ${g.color}">${g.name.slice(0, 3)}</div>
       <input type="text" class="field-input" id="groupCompany_${i}" value="${g.company}" 
              placeholder="${t('company_placeholder')}">
     </div>
@@ -2547,7 +2580,7 @@ function saveSetupAndStart() {
   state.semester = document.getElementById('semester').value;
   state.teacherName = document.getElementById('teacherName').value;
   state.unitName = document.getElementById('unitName').value;
-  state.initialCash = parseInt(document.getElementById('initialCash').value) || 100;
+  state.initialCash = parseInt(document.getElementById('initialCash').value) || 500;
   state.roundDuration = parseInt(document.getElementById('roundDuration').value) || 10;
   state.timeUnit = document.getElementById('timeUnit').value;
   
@@ -2653,6 +2686,9 @@ function lockGroup(i) {
   if (g.currentDecision.price <= 0 || g.currentDecision.plannedQ <= 0) {
     alert(t('alert_invalid_input', g.name));
     return;
+  }
+  if (g.currentDecision.price <= ENGINE_PARAMS.variableCostPerUnit) {
+    if (!confirm(t('warn_price_below_vc'))) return;
   }
   g.locked = true;
   saveState();
@@ -3111,6 +3147,9 @@ function csLock() {
     alert(t('alert_invalid_input', g.name));
     return;
   }
+  if (g.currentDecision.price <= ENGINE_PARAMS.variableCostPerUnit) {
+    if (!confirm(t('warn_price_below_vc'))) return;
+  }
   g.locked = true;
   saveState();
   renderCSuite();
@@ -3211,6 +3250,47 @@ function csCCO(g, last) {
       <tbody>${rows || `<tr><td colspan="4" style="color:var(--text-3);">${t('cs_no_rounds')}</td></tr>`}</tbody></table>
     </div>
   </div>`;
+}
+
+// ============================================================
+// INSTRUCTOR REPORTS (per teaching-guide spec)
+// ============================================================
+function buildReportText() {
+  const sorted = [...state.groups].sort((a, b) => b.totalProfit - a.totalProfit);
+  const lines = [
+    `BizArena — ${state.courseName}`,
+    `${state.classCode} · ${state.semester} · ${state.teacherName}`,
+    `${t('kpi_rounds_played')}: ${state.groups[0].rounds.length}/${state.totalRounds}`,
+    '',
+  ];
+  sorted.forEach((g, i) => lines.push(
+    `${i + 1}. ${g.name} (${g.company || '—'}): ${t('th_profit')} ${g.totalProfit.toFixed(1)}M · ${t('th_revenue')} ${g.totalRevenue.toFixed(1)}M · ${t('th_cash')} ${g.cash.toFixed(1)}M`));
+  return lines.join('\n');
+}
+
+function emailReport() {
+  location.href = 'mailto:?subject=' + encodeURIComponent('BizArena — ' + state.classCode)
+    + '&body=' + encodeURIComponent(buildReportText());
+}
+
+function printReport() {
+  const sorted = [...state.groups].sort((a, b) => b.totalProfit - a.totalProfit);
+  let el = document.getElementById('printReport');
+  if (!el) { el = document.createElement('div'); el.id = 'printReport'; document.body.appendChild(el); }
+  const rows = sorted.map((g, i) =>
+    `<tr><td>${i + 1}</td><td>${g.name}</td><td>${g.company || '—'}</td><td>${g.totalRevenue.toFixed(1)}M</td><td>${g.totalCost.toFixed(1)}M</td><td>${g.totalProfit.toFixed(1)}M</td><td>${g.cash.toFixed(1)}M</td></tr>`).join('');
+  let roundRows = '';
+  for (let r = 0; r < state.groups[0].rounds.length; r++) {
+    roundRows += `<tr><td>${r + 1}</td>` + state.groups.map(g => `<td>${g.rounds[r].profit.toFixed(1)}M</td>`).join('') + '</tr>';
+  }
+  el.innerHTML = `<h1>BizArena — ${state.courseName}</h1>
+    <p>${state.classCode} · ${state.semester} · ${state.teacherName} · ${new Date().toLocaleDateString()}</p>
+    <h2>${t('leaderboard')}</h2>
+    <table><thead><tr><th>#</th><th>${t('th_team')}</th><th>${t('th_company')}</th><th>${t('th_revenue')}</th><th>${t('th_cost')}</th><th>${t('th_profit')}</th><th>${t('th_cash')}</th></tr></thead><tbody>${rows}</tbody></table>
+    <h2>${t('chart_per_round')}</h2>
+    <table><thead><tr><th>${t('th_round')}</th>${state.groups.map(g => `<th>${g.name}</th>`).join('')}</tr></thead><tbody>${roundRows || ''}</tbody></table>
+    <p style="margin-top:24px;">BizArena v2.2 · © 2026 Do Thuy Huong</p>`;
+  window.print();
 }
 
 // ============================================================
