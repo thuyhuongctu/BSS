@@ -11,7 +11,7 @@
   "startUrl": "/BSS/",
   "iconUrl": "https://thuyhuongctu.github.io/BSS/icons/icon-512.png",
   "maskableIconUrl": "https://thuyhuongctu.github.io/BSS/icons/icon-maskable-512.png",
-  "appVersionName": "2.4",
+  "appVersionName": "2.5",
   "appVersionCode": 1,
   "signingKey": {
     "path": "./android.keystore",
