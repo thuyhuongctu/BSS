@@ -5,7 +5,7 @@ Trò chơi mô phỏng kinh doanh dành cho lớp học: 6 vòng đấu, 5 độ
 - **Website:** https://thuyhuongctu.github.io/BSS/
 - **Chính sách quyền riêng tư:** https://thuyhuongctu.github.io/BSS/privacy.html
 - **Tác giả:** PhD Candidate Do Thuy Huong — © 2026, bảo lưu mọi quyền.
-- **Phiên bản:** 2.4 (07/2026)
+- **Phiên bản:** 2.5 (07/2026)
 
 ## Cấu trúc
 

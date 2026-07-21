@@ -3,7 +3,7 @@
 ============================================================
 BizArena — Mô phỏng tình huống trong kinh doanh
 Business Situation Simulation (EC1314)
-Phiên bản / Version: 2.4 — 07/2026 (vinh danh quán quân vòng + phân tích tình trạng)
+Phiên bản / Version: 2.5 — 07/2026 (giao diện Gamified Arena + trợ lý AI Ms. Hương)
 Tác giả / Author: PhD Candidate Do Thuy Huong
 Bản quyền / Copyright © 2026 Do Thuy Huong. All rights reserved.
 Tác phẩm do tác giả tự sáng tạo, không sử dụng kinh phí tổ chức.
@@ -343,6 +343,10 @@ Chương trình máy tính đăng ký quyền tác giả.
     --timer-fg: #EAF1FF;
     --cream: #F2EFE9;
 
+    --gold: #B8860B;
+    --gold-soft: rgba(184, 134, 11, 0.10);
+    --gold-glow: rgba(184, 134, 11, 0.30);
+
     --font-display: 'Plus Jakarta Sans', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -360,7 +364,7 @@ Chương trình máy tính đăng ký quyền tác giả.
   }
 
   [data-theme="dark"] {
-    --bg-0: #0B111E;
+    --bg-0: #070C18;
     --bg-1: #111827;
     --bg-2: #18202F;
     --bg-3: #202A3C;
@@ -395,6 +399,10 @@ Chương trình máy tính đăng ký quyền tác giả.
     --timer-bg: #060B15;
     --timer-fg: #EAF1FF;
     --cream: #111827;
+
+    --gold: #F7C948;
+    --gold-soft: rgba(247, 201, 72, 0.13);
+    --gold-glow: rgba(247, 201, 72, 0.40);
 
     --shadow-card: 0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.35);
     --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.5);
@@ -1595,9 +1603,111 @@ Chương trình máy tính đăng ký quyền tác giả.
     }
   }
 
+
+  /* ============ v2.5 GAMIFIED ARENA ============ */
+  body[data-theme="dark"]::before {
+    background:
+      radial-gradient(ellipse 70% 45% at 15% -8%, rgba(94, 124, 255, 0.10), transparent 60%),
+      radial-gradient(ellipse 50% 38% at 90% 110%, rgba(247, 201, 72, 0.06), transparent 60%),
+      radial-gradient(ellipse 40% 30% at 72% -5%, rgba(122, 63, 242, 0.08), transparent 60%);
+  }
+  .round-pill {
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    background: var(--gold-soft);
+  }
+  .timer-display {
+    box-shadow: 0 0 0 1px var(--gold-glow), 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+  body[data-theme="dark"] .tab.active {
+    box-shadow: 0 0 0 1px var(--gold-glow), var(--shadow-card);
+  }
+  body[data-theme="dark"] .hero-title .accent { color: var(--gold); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #7A3FF2 115%);
+    box-shadow: 0 6px 20px rgba(37, 84, 244, 0.30);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 8px 26px rgba(37, 84, 244, 0.42);
+  }
+
+  /* ---- AI assistant (Ms. Huong) ---- */
+  .ai-fab {
+    position: fixed; right: 18px; bottom: 18px; z-index: 950;
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: var(--bg-elev); cursor: pointer; padding: 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 0 0 4px var(--gold-soft);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    animation: aiPulse 2.8s ease-in-out infinite;
+  }
+  .ai-fab:hover { transform: translateY(-2px) scale(1.05); }
+  .ai-fab img {
+    width: 100%; height: 100%; object-fit: cover; object-position: top;
+    border-radius: 50%; display: block;
+  }
+  .ai-fab-label {
+    position: absolute; top: -6px; right: -4px;
+    background: linear-gradient(135deg, var(--gold), #E0A62E);
+    color: #1A1205; font: 700 10px/1 var(--font-mono);
+    padding: 4px 7px; border-radius: 999px; letter-spacing: 0.06em;
+  }
+  .ai-fab-dot {
+    position: absolute; bottom: 3px; right: 1px; width: 13px; height: 13px;
+    border-radius: 50%; background: var(--danger); border: 2px solid var(--bg-elev);
+  }
+  @keyframes aiPulse {
+    0%, 100% { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 0 0 4px var(--gold-soft); }
+    50% { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 0 0 11px rgba(247, 201, 72, 0.05); }
+  }
+  @media (prefers-reduced-motion: reduce) { .ai-fab { animation: none; } }
+  .ai-panel {
+    position: fixed; right: 18px; bottom: 94px; z-index: 949;
+    width: min(370px, calc(100vw - 28px)); max-height: min(66vh, 560px);
+    display: flex; flex-direction: column;
+    background: var(--bg-elev); border: 1px solid var(--border-strong);
+    border-radius: var(--r-xl); box-shadow: var(--shadow-lg); overflow: hidden;
+  }
+  .ai-panel[hidden] { display: none; }
+  .ai-panel-head {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--gold-soft), transparent 70%);
+  }
+  .ai-panel-head img {
+    width: 44px; height: 44px; border-radius: 50%;
+    object-fit: cover; object-position: top; border: 2px solid var(--gold);
+  }
+  .ai-panel-head h3 { font: 700 14px/1.3 var(--font-display); color: var(--text-0); }
+  .ai-panel-head p { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+  .ai-close {
+    margin-left: auto; background: none; border: none; color: var(--text-3);
+    font-size: 22px; cursor: pointer; line-height: 1; padding: 2px 8px; border-radius: 8px;
+  }
+  .ai-close:hover { background: var(--bg-2); color: var(--text-0); }
+  .ai-panel-body {
+    padding: 12px 14px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .ai-tip {
+    display: flex; gap: 10px; padding: 11px 12px;
+    background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--r-md);
+  }
+  .ai-tip .ico { font-size: 18px; flex-shrink: 0; }
+  .ai-tip h4 { font: 700 12.5px/1.35 var(--font-display); color: var(--text-0); margin-bottom: 3px; }
+  .ai-tip p { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
+  .ai-panel-foot {
+    padding: 9px 14px; font-size: 10.5px; color: var(--text-4);
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 640px) {
+    .ai-fab { width: 56px; height: 56px; right: 12px; bottom: 12px; }
+    .ai-panel { right: 12px; bottom: 80px; }
+  }
 </style>
 </head>
-<body data-theme="light">
+<body data-theme="dark">
 
 <div class="app">
   <!-- ============ INSTITUTION BAR ============ -->
@@ -2022,7 +2132,7 @@ Chương trình máy tính đăng ký quyền tác giả.
   <!-- ============ FOOTER ============ -->
   <footer class="app-footer">
     <div class="footer-text">
-      <span>BizArena v2.4 · © 2026</span>
+      <span>BizArena v2.5 · © 2026</span>
       <span class="divider">|</span>
       <span class="accent-name">PhD Candidate Do Thuy Huong</span>
       <span class="divider">|</span>
@@ -2031,6 +2141,25 @@ Chương trình máy tính đăng ký quyền tác giả.
       <span data-i18n="footer_rights">Bảo lưu mọi quyền</span>
     </div>
   </footer>
+</div>
+
+<!-- AI assistant -->
+<button class="ai-fab" id="aiFab" onclick="toggleAssistant()" aria-label="Ms. Huong AI">
+  <img id="aiFabImg" alt="Ms. Hương">
+  <span class="ai-fab-dot" id="aiFabDot" hidden></span>
+  <span class="ai-fab-label">AI</span>
+</button>
+<div class="ai-panel" id="aiPanel" hidden>
+  <div class="ai-panel-head">
+    <img id="aiPanelImg" alt="">
+    <div>
+      <h3 data-i18n="as_title">Ms. Hương — Trợ lý AI</h3>
+      <p data-i18n="as_sub">Gợi ý theo diễn biến trận đấu</p>
+    </div>
+    <button class="ai-close" onclick="toggleAssistant()" aria-label="Đóng">×</button>
+  </div>
+  <div class="ai-panel-body" id="aiPanelBody"></div>
+  <div class="ai-panel-foot" data-i18n="as_note">Gợi ý tự sinh từ dữ liệu trận đấu.</div>
 </div>
 
 <!-- Modal -->
@@ -2269,6 +2398,26 @@ const TRANSLATIONS = {
     th_wins: "Round wins",
     guide_mascot_title: "With you in every round",
     guide_mascot_text: "BizArena is designed and taught by Ms. Hương. The AI Advisor (blue suit) will join to review each team's results in the upcoming AI Mentor release.",
+    as_title: "Ms. Hương — AI Assistant",
+    as_sub: "Live insights from your match",
+    as_note: "Tips are generated automatically from match data · full AI Mentor (API) coming soon.",
+    as_tip_setup_t: "Getting started",
+    as_tip_setup_b: "Name the 5 teams, check starting capital and round length, then press Save & start Round 1.",
+    as_tip_decide_t: "Decision checklist — Round %s",
+    as_tip_decide_b: "Never price below unit variable cost, plan output close to expected demand, and remember marketing has diminishing returns.",
+    as_tip_event_b: "Demand ×%s, cost ×%s this round — adjust price and output before locking in.",
+    as_tip_lead_t: "Current leader",
+    as_tip_lead_b: "%s is on top with %sM total profit. Others: undercut its price slightly or boost marketing to steal share.",
+    as_tip_loss_t: "Teams in the red",
+    as_tip_loss_b: "%s — negative total profit. Review marketing spend and cut planned output closer to real demand.",
+    as_tip_stockout_t: "Stockout last round",
+    as_tip_stockout_b: "%s sold out — demand exceeded supply. A higher price or a bigger production run can capture that lost revenue.",
+    as_tip_over_t: "Excess inventory last round",
+    as_tip_over_b: "%s produced far more than they sold. Unsold units still cost money — trim output next round.",
+    as_tip_final_t: "Final whistle",
+    as_tip_final_b: "The match is over — %s is the champion with %sM total profit. Open the Leaderboard for the full podium.",
+    as_tip_guide_t: "Need the rules?",
+    as_tip_guide_b: "The Handbook tab covers the demand model, cost formulas and scoring. The Play tab shows a live financial preview for each team.",
   },
   vi: {
     tagline: "Mô phỏng tình huống trong kinh doanh · 6 vòng · EC1314",
@@ -2488,6 +2637,26 @@ const TRANSLATIONS = {
     th_wins: "Vòng thắng",
     guide_mascot_title: "Đồng hành cùng bạn trong từng vòng đấu",
     guide_mascot_text: "BizArena được thiết kế và giảng dạy bởi Ms. Hương. Trợ lý AI (vest xanh) sẽ tham gia nhận xét kết quả từng đội trong phiên bản AI Mentor sắp tới.",
+    as_title: "Ms. Hương — Trợ lý AI",
+    as_sub: "Gợi ý theo diễn biến trận đấu",
+    as_note: "Gợi ý tự sinh từ dữ liệu trận đấu · AI Mentor đầy đủ (API) sẽ ra mắt sau.",
+    as_tip_setup_t: "Bắt đầu thôi!",
+    as_tip_setup_b: "Đặt tên 5 đội, kiểm tra vốn ban đầu và thời lượng vòng, rồi bấm Lưu & bắt đầu Vòng 1.",
+    as_tip_decide_t: "Checklist ra quyết định — Vòng %s",
+    as_tip_decide_b: "Không định giá thấp hơn biến phí đơn vị, đặt sản lượng sát cầu dự kiến, và nhớ rằng marketing có hiệu suất giảm dần.",
+    as_tip_event_b: "Cầu ×%s, chi phí ×%s ở vòng này — điều chỉnh giá và sản lượng trước khi chốt.",
+    as_tip_lead_t: "Đội đang dẫn đầu",
+    as_tip_lead_b: "%s đang dẫn đầu với %sTr lợi nhuận tích lũy. Các đội khác: hạ giá nhẹ hoặc tăng marketing để giành thị phần.",
+    as_tip_loss_t: "Đội đang lỗ",
+    as_tip_loss_b: "%s — lợi nhuận tích lũy âm. Xem lại chi marketing và giảm sản lượng về sát cầu thực tế.",
+    as_tip_stockout_t: "Cháy hàng vòng vừa rồi",
+    as_tip_stockout_b: "%s bán hết sạch — cầu vượt cung. Tăng giá hoặc tăng sản lượng để không bỏ lỡ doanh thu.",
+    as_tip_over_t: "Tồn kho lớn vòng vừa rồi",
+    as_tip_over_b: "%s sản xuất vượt xa lượng bán được. Hàng ế vẫn tốn biến phí — giảm sản lượng ở vòng sau.",
+    as_tip_final_t: "Tiếng còi chung cuộc",
+    as_tip_final_b: "Trận đấu kết thúc — %s vô địch với %sTr lợi nhuận tích lũy. Mở Bảng điểm để xem bục vinh quang đầy đủ.",
+    as_tip_guide_t: "Cần xem luật chơi?",
+    as_tip_guide_b: "Tab Hướng dẫn có mô hình hàm cầu, công thức chi phí và cách tính điểm. Tab Chơi có bảng xem trước tài chính trực tiếp cho từng đội.",
   },
 };
 
@@ -2515,6 +2684,7 @@ function setLang(lang) {
   renderScoreboard();
   renderHistory();
   renderCSuite();
+  if (typeof aiOpen !== 'undefined' && aiOpen) renderAssistant();
 }
 
 function t(key, ...args) {
@@ -2708,6 +2878,7 @@ function switchTab(name, evt) {
   if (name === 'csuite') renderCSuite();
   if (name === 'scoreboard') renderScoreboard();
   if (name === 'history') renderHistory();
+  if (aiOpen) renderAssistant();
 }
 
 // ============================================================
@@ -3084,6 +3255,7 @@ function showRoundSummary() {
 
   showModal(t('modal_round_finalized', state.currentRound), html);
   launchConfetti();
+  assistantNotify();
 }
 
 function goToNextRound() {
@@ -3565,7 +3737,7 @@ function printReport() {
     <table><thead><tr><th>#</th><th>${t('th_team')}</th><th>${t('th_company')}</th><th>${t('th_revenue')}</th><th>${t('th_cost')}</th><th>${t('th_profit')}</th><th>${t('th_cash')}</th></tr></thead><tbody>${rows}</tbody></table>
     <h2>${t('chart_per_round')}</h2>
     <table><thead><tr><th>${t('th_round')}</th>${state.groups.map(g => `<th>${g.name}</th>`).join('')}</tr></thead><tbody>${roundRows || ''}</tbody></table>
-    <p style="margin-top:24px;">BizArena v2.4 · © 2026 Do Thuy Huong</p>`;
+    <p style="margin-top:24px;">BizArena v2.5 · © 2026 Do Thuy Huong</p>`;
   window.print();
 }
 
@@ -3628,10 +3800,89 @@ function resetAll() {
 }
 
 // ============================================================
+// v2.5 — AI ASSISTANT (Ms. Hương) — rule-based, offline
+// ============================================================
+let aiOpen = false;
+
+function activePanelName() {
+  const p = document.querySelector('.panel.active');
+  return p ? p.id.replace('panel-', '') : 'setup';
+}
+
+function toggleAssistant() {
+  aiOpen = !aiOpen;
+  const panel = document.getElementById('aiPanel');
+  if (panel) panel.hidden = !aiOpen;
+  if (aiOpen) {
+    renderAssistant();
+    const dot = document.getElementById('aiFabDot');
+    if (dot) dot.hidden = true;
+  }
+}
+
+function assistantNotify() {
+  if (aiOpen) renderAssistant();
+  else {
+    const dot = document.getElementById('aiFabDot');
+    if (dot) dot.hidden = false;
+  }
+}
+
+function assistantTips() {
+  const tips = [];
+  const played = state.groups[0].rounds.length;
+
+  if (state.currentRound === 0) {
+    tips.push({ ico: '🚀', h: t('as_tip_setup_t'), p: t('as_tip_setup_b') });
+  } else if (played < state.currentRound && state.currentRound <= state.totalRounds) {
+    tips.push({ ico: '🎯', h: t('as_tip_decide_t', String(state.currentRound)), p: t('as_tip_decide_b') });
+    if (state.currentEvent) {
+      tips.push({
+        ico: '⚡', h: t(state.currentEvent.nameKey),
+        p: t('as_tip_event_b', String(state.currentEvent.demandMultiplier), String(state.currentEvent.costMultiplier)),
+      });
+    }
+  }
+
+  if (played > 0) {
+    const ranked = [...state.groups].sort((a, b) => b.totalProfit - a.totalProfit);
+    if (played >= state.totalRounds) {
+      tips.push({ ico: '🏆', h: t('as_tip_final_t'), p: t('as_tip_final_b', ranked[0].name, ranked[0].totalProfit.toFixed(1)) });
+    } else {
+      tips.push({ ico: '👑', h: t('as_tip_lead_t'), p: t('as_tip_lead_b', ranked[0].name, ranked[0].totalProfit.toFixed(1)) });
+    }
+    const losers = state.groups.filter(g => g.totalProfit < 0).map(g => g.name);
+    if (losers.length) tips.push({ ico: '🩹', h: t('as_tip_loss_t'), p: t('as_tip_loss_b', losers.join(', ')) });
+    const fire = [], inv = [];
+    state.groups.forEach(g => {
+      const r = g.rounds[g.rounds.length - 1];
+      if (!r || !(r.price > 0)) return;
+      if (r.demand > r.actualQ + 0.5) fire.push(g.name);
+      else if (r.plannedQ - r.actualQ > Math.max(0.5, r.plannedQ * 0.2)) inv.push(g.name);
+    });
+    if (fire.length) tips.push({ ico: '🔥', h: t('as_tip_stockout_t'), p: t('as_tip_stockout_b', fire.join(', ')) });
+    if (inv.length) tips.push({ ico: '📦', h: t('as_tip_over_t'), p: t('as_tip_over_b', inv.join(', ')) });
+  }
+
+  if (activePanelName() === 'guide' || tips.length === 0) {
+    tips.push({ ico: '📖', h: t('as_tip_guide_t'), p: t('as_tip_guide_b') });
+  }
+  return tips;
+}
+
+function renderAssistant() {
+  const body = document.getElementById('aiPanelBody');
+  if (!body) return;
+  body.innerHTML = assistantTips().map(x =>
+    `<div class="ai-tip"><span class="ico">${x.ico}</span><div><h4>${x.h}</h4><p>${x.p}</p></div></div>`
+  ).join('');
+}
+
+// ============================================================
 // INIT
 // ============================================================
 window.addEventListener('DOMContentLoaded', () => {
-  const theme = localStorage.getItem('ec1314_theme') || 'light';
+  const theme = localStorage.getItem('ec1314_theme') || 'dark';
   document.body.setAttribute('data-theme', theme);
   
   const lang = localStorage.getItem('ec1314_lang') || 'vi';
@@ -3642,6 +3893,11 @@ window.addEventListener('DOMContentLoaded', () => {
   
   const gm = document.getElementById('guideMascot');
   if (gm) gm.src = MASCOT_SIT;
+
+  const fi = document.getElementById('aiFabImg');
+  if (fi) fi.src = MASCOT_WAVE;
+  const pi = document.getElementById('aiPanelImg');
+  if (pi) pi.src = MASCOT_SIT;
 
   loadState();
   setLang(lang);
