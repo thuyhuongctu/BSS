@@ -2,8 +2,8 @@
 
 Trò chơi mô phỏng kinh doanh dành cho lớp học: 6 vòng đấu, 5 đội chơi, hàm cầu kinh tế, biến cố ngẫu nhiên, bảng xếp hạng — song ngữ Việt–Anh, chạy offline (PWA).
 
-- **Website:** https://thuyhuongctu.github.io/bss/
-- **Chính sách quyền riêng tư:** https://thuyhuongctu.github.io/bss/privacy.html
+- **Website:** https://thuyhuongctu.github.io/BSS/
+- **Chính sách quyền riêng tư:** https://thuyhuongctu.github.io/BSS/privacy.html
 - **Tác giả:** PhD Candidate Do Thuy Huong — © 2026, bảo lưu mọi quyền.
 - **Phiên bản:** 2.0 (07/2026)
 
