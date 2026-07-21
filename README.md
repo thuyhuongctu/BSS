@@ -1,6 +1,10 @@
 # BizArena — Mô phỏng tình huống trong kinh doanh
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21421329.svg)](https://doi.org/10.5281/zenodo.21421329)
+
 Trò chơi mô phỏng kinh doanh dành cho lớp học: 6 vòng đấu, 5 đội chơi, hàm cầu kinh tế, biến cố ngẫu nhiên, bảng xếp hạng — song ngữ Việt–Anh, chạy offline (PWA).
+
+> **Trích dẫn (Zenodo):** Do, T. H. (2026). *BizArena — Business Situation Simulation* [Phần mềm máy tính]. Zenodo. https://doi.org/10.5281/zenodo.21421329
 
 - **Website:** https://thuyhuongctu.github.io/BSS/
 - **Chính sách quyền riêng tư:** https://thuyhuongctu.github.io/BSS/privacy.html
