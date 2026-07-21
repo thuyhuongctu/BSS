@@ -3,7 +3,7 @@
 ============================================================
 BizArena — Mô phỏng tình huống trong kinh doanh
 Business Situation Simulation (EC1314)
-Phiên bản / Version: 2.0 — 07/2026 (Core Engine tách riêng + cạnh tranh thị phần động)
+Phiên bản / Version: 2.1 — 07/2026 (bổ sung Bảng điều hành theo vai trò C-Suite)
 Tác giả / Author: PhD Candidate Do Thuy Huong
 Bản quyền / Copyright © 2026 Do Thuy Huong. All rights reserved.
 Tác phẩm do tác giả tự sáng tạo, không sử dụng kinh phí tổ chức.
@@ -15,7 +15,7 @@ Chương trình máy tính đăng ký quyền tác giả.
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="application-name" content="BizArena">
-<meta name="version" content="2.0">
+<meta name="version" content="2.1">
 <meta name="author" content="PhD Candidate Do Thuy Huong">
 <meta name="copyright" content="© 2026 Do Thuy Huong. All rights reserved.">
 <meta name="theme-color" content="#2554F4">
@@ -1355,6 +1355,101 @@ Chương trình máy tính đăng ký quyền tác giả.
   .footer-text .divider { color: var(--text-4); }
   .footer-text .accent-name { color: var(--text-1); font-weight: 600; }
 
+  /* ============ C-SUITE DASHBOARDS ============ */
+  .cs-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .cs-controls .field-select { max-width: 240px; }
+  .role-switch {
+    display: flex;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px;
+    gap: 3px;
+    overflow-x: auto;
+  }
+  .role-btn {
+    padding: 8px 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .role-btn:hover { color: var(--text-1); }
+  .role-btn.active { background: var(--primary); color: #fff; }
+
+  .cs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .cs-grid .span2 { grid-column: 1 / -1; }
+  @media (max-width: 900px) { .cs-grid { grid-template-columns: 1fr; } }
+
+  .meter {
+    height: 12px;
+    background: var(--bg-2);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .meter-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: var(--primary);
+    transition: width 0.4s ease;
+  }
+  .metric-big {
+    font-family: var(--font-mono);
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--text-0);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .metric-caption { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+  .node-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .node-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-2);
+  }
+  .node-chip::before {
+    content: '';
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text-4);
+  }
+  .node-chip.on { color: var(--success-glow); border-color: color-mix(in srgb, var(--success) 40%, transparent); }
+  .node-chip.on::before { background: var(--success); }
+  .alloc-row { display: grid; grid-template-columns: 110px 1fr 52px; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .alloc-row label { font-size: 12.5px; color: var(--text-2); }
+  .alloc-row input[type=range] { width: 100%; accent-color: var(--primary); }
+  .alloc-row .alloc-val { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--text-0); text-align: right; font-variant-numeric: tabular-nums; }
+
   /* ============ RESPONSIVE ============ */
   @media (max-width: 900px) {
     .app { padding: 14px 14px 0; }
@@ -1450,6 +1545,12 @@ Chương trình máy tính đăng ký quyền tác giả.
         <polygon points="5 3 19 12 5 21 5 3"/>
       </svg>
       <span data-i18n="tab_play">Chơi</span>
+    </button>
+    <button class="tab" onclick="switchTab('csuite', event)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>
+      </svg>
+      <span data-i18n="cs_tab">Điều hành</span>
     </button>
     <button class="tab" onclick="switchTab('scoreboard', event)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1626,6 +1727,29 @@ Chương trình máy tính đăng ký quyền tác giả.
     </div>
   </div>
 
+  <!-- ============ PANEL: C-SUITE DASHBOARDS ============ -->
+  <div class="panel" id="panel-csuite">
+    <div class="hero">
+      <h1 class="hero-title">
+        <span data-i18n="cs_title">Bảng điều hành</span> <span class="accent" data-i18n="cs_accent">theo vai trò</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="cs_subtitle">
+        Mỗi thành viên trong đội đảm nhận một vai trò C-level. Chọn đội và vai trò để xem dashboard tương ứng.
+      </p>
+    </div>
+    <div class="cs-controls">
+      <select class="field-select" id="csTeam" onchange="csTeamIdx = parseInt(this.value); renderCSuite();"></select>
+      <div class="role-switch" id="roleSwitch">
+        <button class="role-btn active" data-role="ceo" onclick="setRole('ceo')">CEO</button>
+        <button class="role-btn" data-role="cfo" onclick="setRole('cfo')">CFO</button>
+        <button class="role-btn" data-role="cmo" onclick="setRole('cmo')">CMO</button>
+        <button class="role-btn" data-role="coo" onclick="setRole('coo')">COO</button>
+        <button class="role-btn" data-role="cco" onclick="setRole('cco')">CCO</button>
+      </div>
+    </div>
+    <div id="csuiteContainer"></div>
+  </div>
+
   <!-- ============ PANEL: SCOREBOARD ============ -->
   <div class="panel" id="panel-scoreboard">
     <div class="hero">
@@ -1760,7 +1884,7 @@ Chương trình máy tính đăng ký quyền tác giả.
   <!-- ============ FOOTER ============ -->
   <footer class="app-footer">
     <div class="footer-text">
-      <span>BizArena v2.0 · © 2026</span>
+      <span>BizArena v2.1 · © 2026</span>
       <span class="divider">|</span>
       <span class="accent-name">PhD Candidate Do Thuy Huong</span>
       <span class="divider">|</span>
@@ -1927,6 +2051,59 @@ const TRANSLATIONS = {
     event_subsidy: "💼 Government Support — FC DOWN 20%",
     event_subsidy_desc: "Tax cuts and rent subsidies from the government.",
     footer_rights: "All rights reserved",
+    cs_tab: "C-Suite",
+    cs_title: "Executive",
+    cs_accent: "dashboards",
+    cs_subtitle: "Each team member takes a C-level role. Pick a team and a role to open its dashboard.",
+    cs_need_setup: "Start Round 1 from the Setup tab first — dashboards activate once the game begins.",
+    cs_no_rounds: "No finalized round yet. Data appears after the first 'Finalize Round'.",
+    ceo_h: "Global Command Center",
+    ceo_cash: "Cash",
+    ceo_profit: "Cumulative Profit",
+    ceo_revenue: "Cumulative Revenue",
+    ceo_share: "Last Market Share",
+    ceo_nodes: "Executive nodes — this round",
+    node_done: "submitted",
+    node_wait: "pending",
+    ceo_rounds: "Profit by round",
+    cfo_h: "Financial Input",
+    cfo_preview: "Financial Impact Preview",
+    cfo_preview_note: "Computed by the BizArena Core Engine, assuming other teams keep their current inputs and the current event applies.",
+    cfo_p_share: "Projected share",
+    cfo_p_demand: "Projected demand",
+    cfo_p_sold: "Projected sales",
+    cfo_p_profit: "Projected profit",
+    cmo_h: "Market Insights",
+    cmo_total: "Total Marketing Budget (Million VND)",
+    cmo_alloc: "Channel allocation",
+    ch_social: "Social",
+    ch_search: "Search",
+    ch_trad: "Traditional",
+    ch_pr: "PR",
+    cmo_awareness: "Brand awareness (est.)",
+    cmo_awareness_note: "Grows with cumulative marketing spend across rounds.",
+    cmo_trend: "Market-share trend",
+    cmo_focus: "Campaign focus",
+    focus_brand: "Brand building",
+    focus_promo: "Sales promotion",
+    focus_loyal: "Customer loyalty",
+    coo_h: "Operational Excellence",
+    coo_eff: "Production efficiency (last round)",
+    coo_eff_note: "Units sold vs. planned production.",
+    coo_inv: "Unsold inventory (last round)",
+    coo_inv_note: "Planned units that found no buyer.",
+    coo_table: "Production vs. consumption",
+    th_planned: "Planned",
+    th_demand: "Demand",
+    th_sold: "Sold",
+    th_leftover: "Leftover",
+    cco_h: "Customer Relations",
+    cco_csat: "CSAT (est.)",
+    cco_csat_note: "Share of customer demand actually served last round.",
+    cco_nps: "NPS (est.)",
+    cco_nps_note: "Availability adjusted by price vs. industry average.",
+    cco_hist: "Demand vs. served by round",
+    cco_metrics_note: "Simulated indicators derived from round data — for class discussion.",
   },
   vi: {
     tagline: "Mô phỏng tình huống trong kinh doanh · 6 vòng · EC1314",
@@ -2066,6 +2243,59 @@ const TRANSLATIONS = {
     event_subsidy: "💼 Hỗ trợ chính phủ — FC GIẢM 20%",
     event_subsidy_desc: "Giảm thuế và phí thuê mặt bằng.",
     footer_rights: "Bảo lưu mọi quyền",
+    cs_tab: "Điều hành",
+    cs_title: "Bảng điều hành",
+    cs_accent: "theo vai trò",
+    cs_subtitle: "Mỗi thành viên trong đội đảm nhận một vai trò C-level. Chọn đội và vai trò để mở dashboard tương ứng.",
+    cs_need_setup: "Hãy bắt đầu Vòng 1 ở tab Thiết lập — dashboard kích hoạt khi trò chơi bắt đầu.",
+    cs_no_rounds: "Chưa có vòng nào được chốt. Dữ liệu hiện ra sau lần 'Chốt vòng' đầu tiên.",
+    ceo_h: "Trung tâm chỉ huy",
+    ceo_cash: "Tiền mặt",
+    ceo_profit: "Lợi nhuận lũy kế",
+    ceo_revenue: "Doanh thu lũy kế",
+    ceo_share: "Thị phần vòng gần nhất",
+    ceo_nodes: "Trạng thái ban điều hành — vòng này",
+    node_done: "đã nộp",
+    node_wait: "đang chờ",
+    ceo_rounds: "Lợi nhuận từng vòng",
+    cfo_h: "Nhập liệu tài chính",
+    cfo_preview: "Dự báo tác động tài chính",
+    cfo_preview_note: "Tính bằng Core Engine BizArena, giả định các đội khác giữ nguyên quyết định hiện tại và biến cố hiện hành được áp dụng.",
+    cfo_p_share: "Thị phần dự kiến",
+    cfo_p_demand: "Nhu cầu dự kiến",
+    cfo_p_sold: "Tiêu thụ dự kiến",
+    cfo_p_profit: "Lợi nhuận dự kiến",
+    cmo_h: "Phân tích thị trường",
+    cmo_total: "Tổng ngân sách Marketing (triệu đồng)",
+    cmo_alloc: "Phân bổ kênh",
+    ch_social: "Mạng xã hội",
+    ch_search: "Tìm kiếm",
+    ch_trad: "Truyền thống",
+    ch_pr: "PR",
+    cmo_awareness: "Độ nhận biết thương hiệu (ước tính)",
+    cmo_awareness_note: "Tăng theo tổng chi marketing tích lũy qua các vòng.",
+    cmo_trend: "Xu hướng thị phần",
+    cmo_focus: "Trọng tâm chiến dịch",
+    focus_brand: "Xây dựng thương hiệu",
+    focus_promo: "Khuyến mại bán hàng",
+    focus_loyal: "Giữ chân khách hàng",
+    coo_h: "Vận hành xuất sắc",
+    coo_eff: "Hiệu suất sản xuất (vòng gần nhất)",
+    coo_eff_note: "Số bán được so với sản lượng kế hoạch.",
+    coo_inv: "Tồn kho chưa bán (vòng gần nhất)",
+    coo_inv_note: "Sản lượng kế hoạch không tìm được người mua.",
+    coo_table: "Sản xuất – tiêu thụ theo vòng",
+    th_planned: "Kế hoạch",
+    th_demand: "Nhu cầu",
+    th_sold: "Đã bán",
+    th_leftover: "Tồn dư",
+    cco_h: "Quan hệ khách hàng",
+    cco_csat: "CSAT (ước tính)",
+    cco_csat_note: "Tỷ lệ nhu cầu khách hàng được đáp ứng ở vòng gần nhất.",
+    cco_nps: "NPS (ước tính)",
+    cco_nps_note: "Tỷ lệ đáp ứng điều chỉnh theo giá so với trung bình ngành.",
+    cco_hist: "Nhu cầu và đáp ứng theo vòng",
+    cco_metrics_note: "Chỉ số mô phỏng suy diễn từ dữ liệu vòng chơi — phục vụ thảo luận trên lớp.",
   },
 };
 
@@ -2092,6 +2322,7 @@ function setLang(lang) {
   renderPlayPanel();
   renderScoreboard();
   renderHistory();
+  renderCSuite();
 }
 
 function t(key, ...args) {
@@ -2281,6 +2512,7 @@ function switchTab(name, evt) {
   document.getElementById('panel-' + name).classList.add('active');
   
   if (name === 'play') renderPlayPanel();
+  if (name === 'csuite') renderCSuite();
   if (name === 'scoreboard') renderScoreboard();
   if (name === 'history') renderHistory();
 }
@@ -2736,6 +2968,249 @@ function renderHistory() {
   html += '</tbody></table></div>';
   
   container.innerHTML = html;
+}
+
+// ============================================================
+// C-SUITE DASHBOARDS (dữ liệu thật từ Core Engine + state)
+// ============================================================
+let csRole = 'ceo';
+let csTeamIdx = 0;
+
+function setRole(role) {
+  csRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+  renderCSuite();
+}
+
+function csEnsureMix(g) {
+  if (!g.currentDecision.mix) g.currentDecision.mix = { social: 40, search: 30, trad: 20, pr: 10 };
+  if (!g.currentDecision.focus) g.currentDecision.focus = 'focus_brand';
+  return g.currentDecision.mix;
+}
+
+function fmtM(v) { return (v >= 0 ? '+' : '') + v.toFixed(1) + 'M'; }
+
+function renderCSuite() {
+  const container = document.getElementById('csuiteContainer');
+  if (!container) return;
+
+  const sel = document.getElementById('csTeam');
+  if (sel) {
+    sel.innerHTML = state.groups.map((g, i) =>
+      `<option value="${i}" ${i === csTeamIdx ? 'selected' : ''}>${g.name}${g.company ? ' · ' + g.company : ''}</option>`).join('');
+  }
+
+  if (state.currentRound === 0) {
+    container.innerHTML = `<div class="info-box">${t('cs_need_setup')}</div>`;
+    return;
+  }
+  const g = state.groups[csTeamIdx];
+  const last = g.rounds.length ? g.rounds[g.rounds.length - 1] : null;
+  const render = { ceo: csCEO, cfo: csCFO, cmo: csCMO, coo: csCOO, cco: csCCO }[csRole];
+  container.innerHTML = render(g, last);
+}
+
+function csHeader(key, color) {
+  return `<div class="card-title"><div class="card-title-icon" style="background: color-mix(in srgb, ${color} 12%, transparent); color: ${color};">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-7 4 4 5-9"/></svg>
+  </div><h2>${t(key)}</h2></div>`;
+}
+
+function csCEO(g, last) {
+  const nodes = [
+    { label: 'CFO', on: g.currentDecision.price > 0 && g.currentDecision.plannedQ > 0 },
+    { label: 'CMO', on: g.currentDecision.marketing > 0 },
+    { label: 'COO', on: g.locked },
+  ];
+  const bars = g.rounds.map(r => {
+    const maxAbs = Math.max(...g.rounds.map(x => Math.abs(x.profit)), 1);
+    const w = Math.abs(r.profit) / maxAbs * 90;
+    const color = r.profit >= 0 ? 'var(--success)' : 'var(--danger)';
+    return `<div class="chart-row" style="--group-color: ${g.color}">
+      <div class="chart-label">V${r.round}</div>
+      <div class="chart-bar"><div class="chart-fill" style="width: ${w}%; background: ${color};"></div></div>
+      <div class="chart-value" style="color: ${r.profit >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)'};">${fmtM(r.profit)}</div>
+    </div>`;
+  }).join('');
+  return `<div class="cs-grid">
+    <div class="card span2">${csHeader('ceo_h', 'var(--primary)')}
+      <div class="stats-grid" style="margin-bottom:0;">
+        <div class="kpi-card"><div class="kpi-label">${t('ceo_cash')}</div><div class="kpi-value">${g.cash.toFixed(1)}M</div></div>
+        <div class="kpi-card"><div class="kpi-label">${t('ceo_profit')}</div><div class="kpi-value ${g.totalProfit >= 0 ? 'positive' : 'negative'}">${fmtM(g.totalProfit)}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${t('ceo_revenue')}</div><div class="kpi-value">${g.totalRevenue.toFixed(1)}M</div></div>
+        <div class="kpi-card"><div class="kpi-label">${t('ceo_share')}</div><div class="kpi-value">${last && last.share !== undefined ? last.share.toFixed(0) + '%' : '—'}</div></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-title"><h2>${t('ceo_nodes')}</h2></div>
+      <div class="node-row">${nodes.map(n => `<span class="node-chip ${n.on ? 'on' : ''}">${n.label} · ${t(n.on ? 'node_done' : 'node_wait')}</span>`).join('')}</div>
+    </div>
+    <div class="card"><div class="card-title"><h2>${t('ceo_rounds')}</h2></div>
+      ${bars || `<div class="metric-caption">${t('cs_no_rounds')}</div>`}
+    </div>
+  </div>`;
+}
+
+function csCFO(g, last) {
+  const d = g.currentDecision;
+  const preview = csFinancialPreview(g);
+  return `<div class="cs-grid">
+    <div class="card">${csHeader('cfo_h', 'var(--g2)')}
+      <div class="field"><label class="field-label">${t('label_price')}</label>
+        <input type="number" class="field-input" id="csPrice" value="${d.price || ''}" placeholder="35" ${g.locked ? 'disabled' : ''} oninput="csApplyCFO()"></div>
+      <div class="field"><label class="field-label">${t('label_planned_q')}</label>
+        <input type="number" class="field-input" id="csQ" value="${d.plannedQ || ''}" placeholder="1000" ${g.locked ? 'disabled' : ''} oninput="csApplyCFO()"></div>
+      ${!g.locked
+        ? `<button class="btn btn-success" style="width:100%; margin-top:8px;" onclick="csLock()">${t('btn_lock')}</button>`
+        : `<button class="btn btn-warning" style="width:100%; margin-top:8px;" onclick="unlockGroup(${csTeamIdx}); renderCSuite();">${t('btn_unlock')}</button>`}
+    </div>
+    <div class="card">${csHeader('cfo_preview', 'var(--g1)')}
+      <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:12px;">
+        <div class="kpi-card"><div class="kpi-label">${t('cfo_p_share')}</div><div class="kpi-value">${preview ? preview.share.toFixed(0) + '%' : '—'}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${t('cfo_p_demand')}</div><div class="kpi-value">${preview ? preview.demand : '—'}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${t('cfo_p_sold')}</div><div class="kpi-value">${preview ? preview.actualQ : '—'}</div></div>
+        <div class="kpi-card"><div class="kpi-label">${t('cfo_p_profit')}</div><div class="kpi-value ${preview && preview.profit >= 0 ? 'positive' : 'negative'}">${preview ? fmtM(preview.profit) : '—'}</div></div>
+      </div>
+      <div class="metric-caption">${t('cfo_preview_note')}</div>
+    </div>
+  </div>`;
+}
+
+function csApplyCFO() {
+  const g = state.groups[csTeamIdx];
+  if (g.locked) return;
+  g.currentDecision.price = parseFloat(document.getElementById('csPrice').value) || 0;
+  g.currentDecision.plannedQ = parseFloat(document.getElementById('csQ').value) || 0;
+  saveState();
+  const card = document.querySelectorAll('#csuiteContainer .card')[1];
+  if (card) {
+    const preview = csFinancialPreview(g);
+    const vals = card.querySelectorAll('.kpi-value');
+    if (preview && vals.length === 4) {
+      vals[0].textContent = preview.share.toFixed(0) + '%';
+      vals[1].textContent = preview.demand;
+      vals[2].textContent = preview.actualQ;
+      vals[3].textContent = fmtM(preview.profit);
+      vals[3].className = 'kpi-value ' + (preview.profit >= 0 ? 'positive' : 'negative');
+    }
+  }
+}
+
+function csFinancialPreview(g) {
+  const d = g.currentDecision;
+  if (!(d.price > 0 && d.plannedQ > 0)) return null;
+  const event = state.currentEvent || { demandMultiplier: 1, costMultiplier: 1 };
+  const decisions = state.groups.map(x => x.currentDecision);
+  const results = BizArenaEngine.computeRound(decisions, event);
+  return results[csTeamIdx];
+}
+
+function csLock() {
+  const g = state.groups[csTeamIdx];
+  csApplyCFO();
+  if (g.currentDecision.price <= 0 || g.currentDecision.plannedQ <= 0) {
+    alert(t('alert_invalid_input', g.name));
+    return;
+  }
+  g.locked = true;
+  saveState();
+  renderCSuite();
+}
+
+function csCMO(g, last) {
+  const mix = csEnsureMix(g);
+  const totalSpent = g.rounds.reduce((s, r) => s + (r.marketing || 0), 0) + (g.currentDecision.marketing || 0);
+  const awareness = Math.min(100, Math.round(100 * (1 - Math.exp(-totalSpent / 40))));
+  const prev = g.rounds.length > 1 ? g.rounds[g.rounds.length - 2] : null;
+  const trend = last && prev && last.share !== undefined && prev.share !== undefined ? last.share - prev.share : null;
+  const channels = [['social', 'ch_social'], ['search', 'ch_search'], ['trad', 'ch_trad'], ['pr', 'ch_pr']];
+  return `<div class="cs-grid">
+    <div class="card">${csHeader('cmo_h', 'var(--g5)')}
+      <div class="field"><label class="field-label">${t('cmo_total')}</label>
+        <input type="number" class="field-input" id="csMkt" step="0.5" value="${g.currentDecision.marketing || ''}" placeholder="5" ${g.locked ? 'disabled' : ''}
+          oninput="state.groups[csTeamIdx].currentDecision.marketing = parseFloat(this.value) || 0; saveState();"></div>
+      <label class="field-label" style="margin-top:10px;">${t('cmo_alloc')}</label>
+      ${channels.map(([k, lbl]) => `<div class="alloc-row">
+        <label>${t(lbl)}</label>
+        <input type="range" min="0" max="100" value="${mix[k]}" ${g.locked ? 'disabled' : ''}
+          oninput="state.groups[csTeamIdx].currentDecision.mix.${k} = parseInt(this.value); this.parentElement.querySelector('.alloc-val').textContent = this.value + '%'; saveState();">
+        <span class="alloc-val">${mix[k]}%</span>
+      </div>`).join('')}
+      <div class="field" style="margin-top:10px;"><label class="field-label">${t('cmo_focus')}</label>
+        <select class="field-select" ${g.locked ? 'disabled' : ''} onchange="state.groups[csTeamIdx].currentDecision.focus = this.value; saveState();">
+          ${['focus_brand', 'focus_promo', 'focus_loyal'].map(f => `<option value="${f}" ${g.currentDecision.focus === f ? 'selected' : ''}>${t(f)}</option>`).join('')}
+        </select></div>
+    </div>
+    <div class="card">${csHeader('cmo_awareness', 'var(--g4)')}
+      <div class="metric-big">${awareness}%</div>
+      <div class="meter"><div class="meter-fill" style="width:${awareness}%; background: var(--g4);"></div></div>
+      <div class="metric-caption">${t('cmo_awareness_note')}</div>
+      <div style="margin-top:22px;">
+        <div class="card-title" style="margin-bottom:6px;"><h2>${t('cmo_trend')}</h2></div>
+        <div class="metric-big" style="color:${trend === null ? 'var(--text-3)' : trend >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)'};">
+          ${trend === null ? '—' : (trend >= 0 ? '▲ +' : '▼ ') + trend.toFixed(1) + ' đ%'}
+        </div>
+        <div class="metric-caption">${last && last.share !== undefined ? t('ceo_share') + ': ' + last.share.toFixed(0) + '%' : t('cs_no_rounds')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function csCOO(g, last) {
+  const eff = last && last.plannedQ > 0 ? Math.min(100, Math.round(last.actualQ / last.plannedQ * 100)) : null;
+  const inv = last ? Math.max(0, last.plannedQ - last.actualQ) : null;
+  const rows = g.rounds.map(r => {
+    const leftover = Math.max(0, r.plannedQ - r.actualQ);
+    return `<tr><td><strong>${r.round}</strong></td><td>${r.plannedQ}</td><td>${r.demand !== undefined ? r.demand : '—'}</td><td>${r.actualQ}</td>
+      <td style="color:${leftover > 0 ? 'var(--warning-glow)' : 'var(--text-2)'}; font-weight:700;">${leftover}</td></tr>`;
+  }).join('');
+  return `<div class="cs-grid">
+    <div class="card">${csHeader('coo_eff', 'var(--g3)')}
+      <div class="metric-big">${eff === null ? '—' : eff + '%'}</div>
+      <div class="meter"><div class="meter-fill" style="width:${eff || 0}%; background:${eff === null ? 'var(--text-4)' : eff >= 80 ? 'var(--success)' : eff >= 50 ? 'var(--warning)' : 'var(--danger)'};"></div></div>
+      <div class="metric-caption">${t('coo_eff_note')}</div>
+    </div>
+    <div class="card">${csHeader('coo_inv', 'var(--warning)')}
+      <div class="metric-big">${inv === null ? '—' : inv.toLocaleString()}</div>
+      <div class="metric-caption">${t('coo_inv_note')}</div>
+    </div>
+    <div class="card span2" style="padding:0; overflow:hidden;">
+      <div style="padding:20px 24px 14px;"><div class="card-title" style="margin-bottom:0;"><h2>${t('coo_table')}</h2></div></div>
+      <table class="data-table"><thead><tr><th>${t('th_round')}</th><th>${t('th_planned')}</th><th>${t('th_demand')}</th><th>${t('th_sold')}</th><th>${t('th_leftover')}</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="5" style="color:var(--text-3);">${t('cs_no_rounds')}</td></tr>`}</tbody></table>
+    </div>
+  </div>`;
+}
+
+function csCCO(g, last) {
+  let csat = null, nps = null;
+  if (last && last.demand > 0 && last.share > 0) {
+    csat = Math.round(Math.min(1, last.actualQ / last.demand) * 100);
+    const activeRounds = state.groups.map(x => x.rounds[g.rounds.length - 1]).filter(r => r && r.price > 0);
+    const avgP = activeRounds.reduce((s, r) => s + r.price, 0) / Math.max(1, activeRounds.length);
+    nps = Math.max(-100, Math.min(100, Math.round(csat - 50 - ((last.price - avgP) / avgP) * 100)));
+  }
+  const rows = g.rounds.map(r => {
+    const served = r.demand > 0 ? Math.round(Math.min(1, r.actualQ / r.demand) * 100) : null;
+    return `<tr><td><strong>${r.round}</strong></td><td>${r.demand !== undefined ? r.demand : '—'}</td><td>${r.actualQ}</td>
+      <td style="font-weight:700; color:${served === null ? 'var(--text-3)' : served >= 95 ? 'var(--success-glow)' : 'var(--warning-glow)'};">${served === null ? '—' : served + '%'}</td></tr>`;
+  }).join('');
+  return `<div class="cs-grid">
+    <div class="card">${csHeader('cco_csat', 'var(--g1)')}
+      <div class="metric-big">${csat === null ? '—' : csat + '%'}</div>
+      <div class="meter"><div class="meter-fill" style="width:${csat || 0}%; background: var(--g1);"></div></div>
+      <div class="metric-caption">${t('cco_csat_note')}</div>
+    </div>
+    <div class="card">${csHeader('cco_nps', 'var(--g2)')}
+      <div class="metric-big" style="color:${nps === null ? 'var(--text-0)' : nps >= 0 ? 'var(--success-glow)' : 'var(--danger-glow)'};">${nps === null ? '—' : (nps >= 0 ? '+' : '') + nps}</div>
+      <div class="metric-caption">${t('cco_nps_note')}</div>
+    </div>
+    <div class="card span2" style="padding:0; overflow:hidden;">
+      <div style="padding:20px 24px 14px;"><div class="card-title" style="margin-bottom:0;"><h2>${t('cco_hist')}</h2></div>
+        <div class="metric-caption">${t('cco_metrics_note')}</div></div>
+      <table class="data-table"><thead><tr><th>${t('th_round')}</th><th>${t('th_demand')}</th><th>${t('th_sold')}</th><th>CSAT</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="4" style="color:var(--text-3);">${t('cs_no_rounds')}</td></tr>`}</tbody></table>
+    </div>
+  </div>`;
 }
 
 // ============================================================
