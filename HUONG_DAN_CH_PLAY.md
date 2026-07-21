@@ -6,7 +6,7 @@ Tài liệu này dành cho tác giả BizArena. Mọi thứ kỹ thuật đã đ
 
 | File | Công dụng |
 |---|---|
-| `index.html` | Ứng dụng BizArena v2.2 (tự chứa, đã nhúng font) |
+| `index.html` | Ứng dụng BizArena v2.4 (tự chứa, đã nhúng font) |
 | `manifest.json` | Khai báo PWA (tên, icon, màu) — điều kiện bắt buộc của TWA |
 | `sw.js` | Service worker — cho phép chạy offline, điều kiện của TWA |
 | `privacy.html` | Chính sách quyền riêng tư song ngữ (bắt buộc khi khai Play Console) |
