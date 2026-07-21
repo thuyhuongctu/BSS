@@ -3,7 +3,7 @@
 ============================================================
 BizArena — Mô phỏng tình huống trong kinh doanh
 Business Situation Simulation (EC1314)
-Phiên bản / Version: 1.2 — 07/2026
+Phiên bản / Version: 2.0 — 07/2026 (Core Engine tách riêng + cạnh tranh thị phần động)
 Tác giả / Author: PhD Candidate Do Thuy Huong
 Bản quyền / Copyright © 2026 Do Thuy Huong. All rights reserved.
 Tác phẩm do tác giả tự sáng tạo, không sử dụng kinh phí tổ chức.
@@ -15,7 +15,7 @@ Chương trình máy tính đăng ký quyền tác giả.
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="application-name" content="BizArena">
-<meta name="version" content="1.2">
+<meta name="version" content="2.0">
 <meta name="author" content="PhD Candidate Do Thuy Huong">
 <meta name="copyright" content="© 2026 Do Thuy Huong. All rights reserved.">
 <meta name="theme-color" content="#2554F4">
@@ -1723,9 +1723,11 @@ Chương trình máy tính đăng ký quyền tác giả.
     <div class="guide-section">
       <h3 data-i18n="guide_h_formulas">Computation Formulas</h3>
       <div class="info-box">
-        <strong data-i18n="formula_demand">Demand:</strong> Q_actual = (3000 − 50 × P) × (1 + min(marketing × 0.05, 0.5)) × event_multiplier<br>
-        <strong data-i18n="formula_revenue">Revenue:</strong> DT = P × min(Q_planned, Q_actual)<br>
-        <strong data-i18n="formula_cost">Cost:</strong> TC = FC(30M) + 12k × Q_sold + Marketing<br>
+        <strong data-i18n="formula_demand">Demand:</strong> Q_market = (3000 − 50 × P̄) × N × event_multiplier &nbsp;(P̄: giá trung bình ngành, N: số đội tham gia)<br>
+        <strong>Attractiveness:</strong> A = (P̄ / P)^1.5 × (1 + min(marketing × 0.05, 0.5))<br>
+        <strong>Demand_i:</strong> Q_market × A_i / ΣA → Q_sold = min(Q_planned, Demand_i) + tái phân bổ cầu dư<br>
+        <strong data-i18n="formula_revenue">Revenue:</strong> DT = P × Q_sold<br>
+        <strong data-i18n="formula_cost">Cost:</strong> TC = FC(30M) × event + 12k × Q_sold + Marketing<br>
         <strong data-i18n="formula_profit">Profit:</strong> LN = DT − TC<br>
         <strong>MoS:</strong> (Q_sold − Q*) / Q_sold × 100%
       </div>
@@ -1758,7 +1760,7 @@ Chương trình máy tính đăng ký quyền tác giả.
   <!-- ============ FOOTER ============ -->
   <footer class="app-footer">
     <div class="footer-text">
-      <span>BizArena v1.2 · © 2026</span>
+      <span>BizArena v2.0 · © 2026</span>
       <span class="divider">|</span>
       <span class="accent-name">PhD Candidate Do Thuy Huong</span>
       <span class="divider">|</span>
@@ -1817,7 +1819,7 @@ const TRANSLATIONS = {
     teams: "Participating Teams",
     company_placeholder: "e.g., MocCafe, Springbean Bakery...",
     note: "Note:",
-    setup_note: "Each round, teams make 3 decisions: (1) Price, (2) Planned Quantity, (3) Marketing Budget. The system auto-calculates revenue, cost, profit. Random events occur in Rounds 3 and 5.",
+    setup_note: "Each round, teams make 3 decisions: (1) Price, (2) Planned Quantity, (3) Marketing Budget. All teams share ONE market — pricing below the industry average or spending more on marketing steals market share from rivals. Random events occur in Rounds 3 and 5.",
     save_start: "Save & Start Round 1",
     instructor_console: "Instructor Console",
     live: "Live",
@@ -1847,7 +1849,7 @@ const TRANSLATIONS = {
     guide_accent: "handbook",
     guide_subtitle: "Everything you need to run the 6-round business simulation across the next 6 sessions.",
     philosophy: "Philosophy:",
-    guide_philosophy: "Each round = 1 quarter of business operation. Teams make decisions about Price, Quantity, Marketing. The system computes actual revenue based on demand function Q = a - bP × (1 + marketing_factor).",
+    guide_philosophy: "Each round = 1 quarter of business operation. All teams compete in ONE shared market: total demand follows the industry average price, and each team's market share depends on its relative price and marketing (attractiveness model). One team's decisions directly affect every other team's sales.",
     guide_h_progression: "6-Round Progression (across 6 sessions)",
     th_round: "Round",
     th_session: "Session",
@@ -1956,7 +1958,7 @@ const TRANSLATIONS = {
     teams: "5 nhóm tham gia",
     company_placeholder: "VD: Quán Café Mộc, Tiệm bánh Xuân...",
     note: "Lưu ý:",
-    setup_note: "Mỗi vòng, các nhóm ra 3 quyết định: (1) Giá bán, (2) Sản lượng dự kiến, (3) Ngân sách marketing. Hệ thống tự tính doanh thu, chi phí, lợi nhuận. Có biến cố ngẫu nhiên ở vòng 3 và 5.",
+    setup_note: "Mỗi vòng, các nhóm ra 3 quyết định: (1) Giá bán, (2) Sản lượng dự kiến, (3) Ngân sách marketing. Cả 5 đội chung MỘT thị trường — định giá thấp hơn trung bình ngành hoặc chi marketing mạnh hơn sẽ giành thị phần của đối thủ. Có biến cố ngẫu nhiên ở vòng 3 và 5.",
     save_start: "Lưu & Bắt đầu Vòng 1",
     instructor_console: "Điều khiển GV",
     live: "Live",
@@ -1986,7 +1988,7 @@ const TRANSLATIONS = {
     guide_accent: "hướng dẫn",
     guide_subtitle: "Mọi thứ cần biết để vận hành 6 vòng chơi qua 6 buổi học tiếp theo.",
     philosophy: "Triết lý:",
-    guide_philosophy: "Mỗi vòng = 1 quý kinh doanh. Nhóm quyết định Giá, Sản lượng, Marketing. Hệ thống tính doanh thu thực tế qua hàm cầu Q = a - bP × (1 + marketing_factor).",
+    guide_philosophy: "Mỗi vòng = 1 quý kinh doanh. Các đội cạnh tranh trong MỘT thị trường chung: tổng cầu phụ thuộc giá trung bình ngành, thị phần mỗi đội phụ thuộc giá tương đối và marketing (mô hình sức hút). Quyết định của một đội ảnh hưởng trực tiếp doanh số mọi đội khác.",
     guide_h_progression: "Tiến trình 6 vòng (qua 6 buổi)",
     th_round: "Vòng",
     th_session: "Buổi",
@@ -2113,9 +2115,99 @@ function toggleTheme() {
 }
 
 // ============================================================
+// CORE ENGINE — MÔ HÌNH KINH TẾ BIZARENA v2.0
+// Phần thuật toán cốt lõi, TÁCH RIÊNG khỏi giao diện.
+// Toàn bộ là hàm thuần túy: không truy cập DOM, không đọc/ghi
+// trạng thái toàn cục. Có thể kiểm thử và đăng ký bản quyền
+// độc lập với lớp giao diện.
+// ============================================================
+const ENGINE_PARAMS = {
+  marketBase: 3000,         // a: quy mô thị trường cơ sở trên mỗi đội (SP)
+  priceSlope: 50,           // b: độ dốc tổng cầu theo giá trung bình ngành
+  priceElasticity: 1.5,     // γ: độ nhạy thị phần theo giá tương đối
+  marketingBoostPerM: 0.05, // sức hút tăng thêm trên 1 triệu đồng marketing
+  marketingBoostCap: 0.5,   // trần sức hút từ marketing (+50%)
+  variableCostPerUnit: 12,  // chi phí biến đổi (nghìn đồng/SP)
+  fixedCost: 30,            // định phí mỗi vòng (triệu đồng)
+};
+
+const BizArenaEngine = {
+  // Sức hấp dẫn của một đội: giá thấp hơn trung bình ngành và
+  // marketing mạnh hơn thì hút được nhiều khách hơn.
+  attractiveness(decision, avgPrice, p = ENGINE_PARAMS) {
+    const priceFactor = Math.pow(avgPrice / decision.price, p.priceElasticity);
+    const mktBoost = 1 + Math.min(decision.marketing * p.marketingBoostPerM, p.marketingBoostCap);
+    return priceFactor * mktBoost;
+  },
+
+  // Tính kết quả một vòng cho toàn thị trường (cạnh tranh động):
+  // quyết định của mỗi đội ảnh hưởng trực tiếp thị phần các đội khác.
+  // decisions: mảng {price, plannedQ, marketing} (đội không nộp: price/plannedQ = 0)
+  // event: {demandMultiplier, costMultiplier}
+  // Trả về mảng cùng thứ tự; phần tử null = đội không tham gia vòng này.
+  computeRound(decisions, event, p = ENGINE_PARAMS) {
+    const active = decisions
+      .map((d, i) => ({ d, i }))
+      .filter(x => x.d && x.d.price > 0 && x.d.plannedQ > 0);
+    if (active.length === 0) return decisions.map(() => null);
+
+    const avgPrice = active.reduce((s, x) => s + x.d.price, 0) / active.length;
+    const qMarket = Math.max(0, p.marketBase - p.priceSlope * avgPrice)
+      * active.length * event.demandMultiplier;
+
+    const attr = active.map(x => this.attractiveness(x.d, avgPrice, p));
+    const attrSum = attr.reduce((s, a) => s + a, 0);
+
+    // Phân bổ cầu theo thị phần, sau đó tái phân bổ MỘT lần phần cầu
+    // chưa được phục vụ cho các đội còn dư năng lực sản xuất.
+    const demand = attr.map(a => qMarket * a / attrSum);
+    const sold = active.map((x, k) => Math.min(x.d.plannedQ, demand[k]));
+    const leftover = demand.reduce((s, dm, k) => s + (dm - sold[k]), 0);
+    if (leftover > 0.5) {
+      const spareAttrSum = active.reduce(
+        (s, x, k) => s + (x.d.plannedQ - sold[k] > 0.5 ? attr[k] : 0), 0);
+      if (spareAttrSum > 0) {
+        active.forEach((x, k) => {
+          const spare = x.d.plannedQ - sold[k];
+          if (spare > 0.5) sold[k] += Math.min(spare, leftover * attr[k] / spareAttrSum);
+        });
+      }
+    }
+
+    const results = decisions.map(() => null);
+    active.forEach((x, k) => {
+      const d = x.d;
+      const actualQ = sold[k];
+      const revenue = (d.price * actualQ) / 1000;
+      const variableCost = (p.variableCostPerUnit * actualQ) / 1000;
+      const fixedCost = p.fixedCost * event.costMultiplier;
+      const totalCost = variableCost + fixedCost + d.marketing;
+      const profit = revenue - totalCost;
+      const cmPerUnit = (d.price - p.variableCostPerUnit) / 1000;
+      const bepQ = cmPerUnit > 0 ? (fixedCost + d.marketing) / cmPerUnit : Infinity;
+      const mos = actualQ > 0 ? ((actualQ - bepQ) / actualQ) * 100 : -100;
+      results[x.i] = {
+        share: (attr[k] / attrSum) * 100,
+        demand: Math.round(demand[k]),
+        actualQ: Math.round(actualQ),
+        revenue, cost: totalCost, profit, mos,
+        bepQ: isFinite(bepQ) ? Math.round(bepQ) : 0,
+      };
+    });
+    return results;
+  },
+
+  // Đội không nộp quyết định: chịu định phí, không doanh thu.
+  penaltyResult(event, p = ENGINE_PARAMS) {
+    const penaltyFC = p.fixedCost * event.costMultiplier;
+    return { share: 0, demand: 0, actualQ: 0, revenue: 0, cost: penaltyFC, profit: -penaltyFC, mos: -100, bepQ: 0 };
+  },
+};
+
+// ============================================================
 // STATE MANAGEMENT
 // ============================================================
-const STORAGE_KEY = "ec1314_game_v3";
+const STORAGE_KEY = "ec1314_game_v4";
 
 const DEFAULT_GROUPS = [
   { id: 1, name: "TEAM 01", company: "", color: "var(--g1)" },
@@ -2416,57 +2508,30 @@ function endCurrentRound() {
   if (unlocked.length > 0) {
     if (!confirm(t('alert_unlocked', unlocked.length, unlocked.map(g => g.name).join(', ')))) return;
   }
-  
+
   const event = state.currentEvent || { demandMultiplier: 1.0, costMultiplier: 1.0, nameKey: 'none' };
-  
-  state.groups.forEach(g => {
+  const results = BizArenaEngine.computeRound(state.groups.map(g => g.currentDecision), event);
+
+  state.groups.forEach((g, i) => {
+    const r = results[i] || BizArenaEngine.penaltyResult(event);
     const d = g.currentDecision;
-    if (d.price === 0 || d.plannedQ === 0) {
-      const penaltyFC = 30 * event.costMultiplier;
-      g.rounds.push({
-        round: state.currentRound, price: 0, plannedQ: 0, marketing: 0,
-        actualQ: 0, revenue: 0, cost: penaltyFC, profit: -penaltyFC,
-        mos: -100, event: event.nameKey,
-      });
-      g.totalCost += penaltyFC;
-      g.totalProfit -= penaltyFC;
-      g.cash -= penaltyFC;
-      return;
-    }
-    
-    const a = 3000, b = 50;
-    let demandPotential = a - b * d.price;
-    const marketingBoost = Math.min(d.marketing * 0.05, 0.5);
-    demandPotential *= (1 + marketingBoost);
-    demandPotential *= event.demandMultiplier;
-    
-    const actualQ = Math.max(0, Math.min(d.plannedQ, demandPotential));
-    const revenue = (d.price * actualQ) / 1000;
-    const variableCostPerUnit = 12;
-    const variableCost = (variableCostPerUnit * actualQ) / 1000;
-    const fixedCost = 30 * event.costMultiplier;
-    const marketingCost = d.marketing;
-    const totalCost = variableCost + fixedCost + marketingCost;
-    const profit = revenue - totalCost;
-    const cmPerUnit = (d.price - variableCostPerUnit) / 1000;
-    const bepQ = cmPerUnit > 0 ? (fixedCost + marketingCost) / cmPerUnit : Infinity;
-    const mos = actualQ > 0 ? ((actualQ - bepQ) / actualQ) * 100 : -100;
-    
     g.rounds.push({
       round: state.currentRound,
-      price: d.price, plannedQ: d.plannedQ, marketing: d.marketing,
-      actualQ: Math.round(actualQ), revenue, cost: totalCost, profit,
-      mos, bepQ: Math.round(bepQ),
+      price: results[i] ? d.price : 0,
+      plannedQ: results[i] ? d.plannedQ : 0,
+      marketing: results[i] ? d.marketing : 0,
+      share: r.share, demand: r.demand, actualQ: r.actualQ,
+      revenue: r.revenue, cost: r.cost, profit: r.profit,
+      mos: r.mos, bepQ: r.bepQ,
       event: event.nameKey,
     });
-    
-    g.totalRevenue += revenue;
-    g.totalCost += totalCost;
-    g.totalProfit += profit;
-    g.cash += profit;
-    g.mosHistory.push(mos);
+    g.totalRevenue += r.revenue;
+    g.totalCost += r.cost;
+    g.totalProfit += r.profit;
+    g.cash += r.profit;
+    if (results[i]) g.mosHistory.push(r.mos);
   });
-  
+
   saveState();
   showRoundSummary();
 }
@@ -2478,6 +2543,7 @@ function showRoundSummary() {
     currentLang === 'en' ? 'Price' : 'Giá',
     'Q (' + (currentLang === 'en' ? 'planned' : 'DK') + ')',
     'Q (' + (currentLang === 'en' ? 'actual' : 'TT') + ')',
+    currentLang === 'en' ? 'Share' : 'Thị phần',
     currentLang === 'en' ? 'Revenue' : 'DT',
     currentLang === 'en' ? 'Cost' : 'CP',
     currentLang === 'en' ? 'Profit' : 'LN',
@@ -2495,6 +2561,7 @@ function showRoundSummary() {
       <td>${r.price}k</td>
       <td>${r.plannedQ}</td>
       <td><strong>${r.actualQ}</strong></td>
+      <td>${r.share !== undefined ? r.share.toFixed(0) + '%' : '—'}</td>
       <td>${r.revenue.toFixed(1)}M</td>
       <td>${r.cost.toFixed(1)}M</td>
       <td style="color: ${profitColor}; font-weight: 700;">${r.profit >= 0 ? '+' : ''}${r.profit.toFixed(1)}M</td>
