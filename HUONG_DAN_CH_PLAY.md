@@ -6,7 +6,7 @@ Tài liệu này dành cho tác giả BizArena. Mọi thứ kỹ thuật đã đ
 
 | File | Công dụng |
 |---|---|
-| `index.html` | Ứng dụng BizArena v2.0 (tự chứa, đã nhúng font) |
+| `index.html` | Ứng dụng BizArena v2.1 (tự chứa, đã nhúng font) |
 | `manifest.json` | Khai báo PWA (tên, icon, màu) — điều kiện bắt buộc của TWA |
 | `sw.js` | Service worker — cho phép chạy offline, điều kiện của TWA |
 | `privacy.html` | Chính sách quyền riêng tư song ngữ (bắt buộc khi khai Play Console) |
@@ -21,7 +21,7 @@ Tài liệu này dành cho tác giả BizArena. Mọi thứ kỹ thuật đã đ
 1. Merge pull request vào nhánh `main`.
 2. Vào repo trên GitHub → **Settings → Pages** → mục **Source** chọn **GitHub Actions** (nếu chưa tự bật).
 3. Chờ workflow "Deploy to GitHub Pages" chạy xong (tab **Actions**), website sẽ hoạt động tại:
-   **https://thuyhuongctu.github.io/bss/**
+   **https://thuyhuongctu.github.io/BSS/**
 4. Kiểm tra trên điện thoại: mở link, thấy trình duyệt gợi ý "Thêm vào màn hình chính" là PWA đã đạt chuẩn.
 
 ## Bước 2 — Tạo file .aab bằng Bubblewrap (công cụ chính thức của Google, miễn phí)
@@ -31,7 +31,7 @@ Cần cài Node.js trên máy tính cá nhân, sau đó:
 ```bash
 npm i -g @bubblewrap/cli
 cd <thư-mục-làm-việc>   # copy sẵn file twa-manifest.json trong repo vào đây
-bubblewrap init --manifest https://thuyhuongctu.github.io/bss/manifest.json
+bubblewrap init --manifest https://thuyhuongctu.github.io/BSS/manifest.json
 # Lần đầu chạy, Bubblewrap tự tải JDK + Android SDK (đồng ý các câu hỏi)
 # Khi được hỏi thông tin, các giá trị khuyến nghị đã có trong twa-manifest.json:
 #   Package ID: com.dothuyhuong.bizarena
@@ -58,7 +58,7 @@ Copy chuỗi dạng `AA:BB:CC:...` rồi thay vào chỗ `THAY_BANG_SHA256_FINGE
 1. Đăng ký tài khoản nhà phát triển tại play.google.com/console (phí $25, một lần).
 2. **Create app**: tên "BizArena", ngôn ngữ mặc định Tiếng Việt, loại **App**, chế độ **Free**.
 3. Hoàn thành **Set up your app**:
-   - Privacy Policy: dán link `https://thuyhuongctu.github.io/bss/privacy.html`
+   - Privacy Policy: dán link `https://thuyhuongctu.github.io/BSS/privacy.html`
    - Data safety: khai "Không thu thập dữ liệu" (đúng thực tế — app chỉ lưu localStorage)
    - Content rating: trả lời bảng câu hỏi (app giáo dục, không có nội dung nhạy cảm)
 4. **Store listing**: dùng ảnh trong `store-assets/`:

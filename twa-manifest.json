@@ -8,10 +8,10 @@
   "navigationColor": "#0C1526",
   "navigationColorDark": "#0B111E",
   "backgroundColor": "#F4F6F9",
-  "startUrl": "/bss/",
-  "iconUrl": "https://thuyhuongctu.github.io/bss/icons/icon-512.png",
-  "maskableIconUrl": "https://thuyhuongctu.github.io/bss/icons/icon-maskable-512.png",
-  "appVersionName": "1.2",
+  "startUrl": "/BSS/",
+  "iconUrl": "https://thuyhuongctu.github.io/BSS/icons/icon-512.png",
+  "maskableIconUrl": "https://thuyhuongctu.github.io/BSS/icons/icon-maskable-512.png",
+  "appVersionName": "2.1",
   "appVersionCode": 1,
   "signingKey": {
     "path": "./android.keystore",
@@ -22,6 +22,6 @@
   "fallbackType": "customtabs",
   "features": {},
   "shortcuts": [],
-  "webManifestUrl": "https://thuyhuongctu.github.io/bss/manifest.json",
-  "fullScopeUrl": "https://thuyhuongctu.github.io/bss/"
+  "webManifestUrl": "https://thuyhuongctu.github.io/BSS/manifest.json",
+  "fullScopeUrl": "https://thuyhuongctu.github.io/BSS/"
 }

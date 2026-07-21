@@ -1,5 +1,5 @@
-// BizArena service worker — v2.0
-const CACHE = 'bizarena-v2.0';
+// BizArena service worker — v2.1
+const CACHE = 'bizarena-v2.1';
 const ASSETS = [
   './',
   'index.html',
